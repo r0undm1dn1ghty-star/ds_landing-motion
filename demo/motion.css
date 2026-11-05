@@ -1,0 +1,238 @@
+/* ds_landing-motion — живое демо приёмов. Токены сняты из :root discovery-system-repo/index.html (2026-11-01). */
+
+:root{
+  --bg:#111524; --card:#161c30; --deep:#0d1120;
+  --ink:#eef2f9; --body:#b8c3d6; --meta:#8893a8; --faint:#7a85a0;
+  --accent:#7bc4a8; --accent-rgb:123,196,168;
+  --btn:#1f7a4d; --btn-h:#26895b; --btn-text:#f2fbf5;
+  --line:rgba(255,255,255,.12); --line-soft:rgba(255,255,255,.07);
+  --ease:cubic-bezier(.22,1,.36,1);
+  --ease-move:cubic-bezier(.16,1,.3,1);
+  --r-card:14px; --r-sm:10px;
+  --sans:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,'Cascadia Mono',monospace;
+  --display:'Onest','IBM Plex Sans',system-ui,sans-serif;
+  /* семантическая шкала z-index */
+  --z-base:1; --z-float:10; --z-badge:20; --z-header:30;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{background:var(--bg);scroll-behavior:smooth}
+body{
+  background:var(--bg); color:var(--body);
+  font:400 16px/1.6 var(--sans);
+  -webkit-font-smoothing:antialiased;
+  font-variant-numeric:tabular-nums;
+}
+h1,h2,h3{color:var(--ink); font-family:var(--display); font-weight:600; text-wrap:balance}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:2px}
+
+.page{max-width:1180px; margin:0 auto; padding:40px 24px 96px}
+.head{display:flex; flex-wrap:wrap; gap:18px 32px; align-items:flex-end; justify-content:space-between; margin-bottom:34px}
+.head h1{font-size:clamp(1.9rem,4.2vw,2.9rem); letter-spacing:-.03em; line-height:1.05}
+.head p{max-width:62ch; color:var(--meta); font-size:.95rem; text-wrap:pretty}
+.head .k{display:flex; gap:8px; flex-wrap:wrap}
+.fact{font:500 .72rem/1 var(--mono); letter-spacing:.02em; color:var(--meta); border:1px solid var(--line); border-radius:var(--r-sm); padding:7px 10px}
+
+.grid{display:grid; grid-template-columns:repeat(6,1fr); gap:20px}
+.fx{
+  grid-column:span 3;
+  border:1px solid var(--line); border-radius:var(--r-card);
+  background:rgba(255,255,255,.015);
+  padding:22px 22px 20px; display:flex; flex-direction:column; gap:14px;
+}
+.fx.w4{grid-column:span 4} .fx.w2{grid-column:span 2} .fx.full{grid-column:span 6}
+.fx h2{font-size:1.12rem; letter-spacing:-.02em}
+.fx .what{font-size:.86rem; color:var(--meta); text-wrap:pretty}
+.fx .what b{color:var(--body); font-weight:500}
+.stage{position:relative; border:1px solid var(--line-soft); border-radius:var(--r-sm); overflow:hidden; background:var(--deep)}
+.h-320{height:320px} .h-280{height:280px} .h-240{height:240px} .h-200{height:200px}
+canvas{display:block; width:100%; height:100%}
+.ctl{display:flex; gap:8px; flex-wrap:wrap}
+button{
+  font:500 .82rem/1 var(--sans); color:var(--ink); cursor:pointer;
+  background:rgba(255,255,255,.04); border:1px solid var(--line);
+  border-radius:var(--r-sm); padding:9px 13px; min-height:38px;
+  transition:transform 160ms var(--ease), background-color 160ms var(--ease), border-color 160ms var(--ease);
+}
+button[aria-pressed="true"]{background:var(--btn); border-color:var(--btn-h); color:var(--btn-text)}
+@media (hover:hover) and (pointer:fine){ button:hover{background:rgba(255,255,255,.07)} }
+button:active{transform:scale(.97)}
+.badge{
+  position:absolute; left:12px; bottom:12px; z-index:var(--z-badge);
+  font:500 .68rem/1 var(--mono); color:var(--body);
+  background:rgba(13,17,32,.86); border:1px solid var(--line); border-radius:var(--r-sm);
+  padding:6px 9px; pointer-events:none; max-width:calc(100% - 24px);
+}
+.measure{font:500 .72rem/1.5 var(--mono); color:var(--faint)}
+.measure b{color:var(--accent); font-weight:500}
+
+/* ---------- 1. fake-3D: слои translateZ ---------- */
+.stage.tilt{perspective:900px; perspective-origin:50% 50%; display:grid; place-items:center; cursor:crosshair}
+.tilt-inner{
+  position:relative; width:78%; height:72%;
+  transform-style:preserve-3d;
+  transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+  transition:transform 260ms var(--ease);
+}
+.tilt-inner .plate{
+  position:absolute; inset:0; border-radius:var(--r-sm);
+  border:1px solid var(--line); background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.012));
+}
+.tilt-back{transform:translateZ(-56px) scale(.94); opacity:.5}
+.tilt-mid{transform:translateZ(-8px)}
+.tilt-front{transform:translateZ(58px); background:rgba(22,28,48,.9)!important}
+.tilt-front .row{display:flex; justify-content:space-between; align-items:baseline; padding:16px 16px 0}
+.tilt-front .n{font-family:var(--display); font-size:2rem; font-weight:600; color:var(--ink); letter-spacing:-.03em}
+.tilt-front .cap{font:500 .7rem/1 var(--mono); color:var(--meta)}
+.tilt-front .bar{position:absolute; left:16px; right:16px; bottom:16px; height:6px; border-radius:3px; background:rgba(255,255,255,.08); overflow:hidden}
+.tilt-front .bar i{display:block; height:100%; width:var(--w,62%); background:var(--accent); transform-origin:left center}
+.tilt-spec{
+  position:absolute; inset:0; border-radius:var(--r-sm); pointer-events:none;
+  background:radial-gradient(340px 200px at var(--sx,70%) var(--sy,30%),rgba(255,255,255,.16),transparent 70%);
+  transform:translateZ(60px);
+}
+
+/* ---------- 3. turntable ---------- */
+.stage.tt{display:grid; place-items:center; touch-action:none}
+.tt-sprite{
+  width:176px; height:176px; background-repeat:no-repeat; background-size:auto 100%;
+  background-position-x:calc(var(--frame,0) * -176px);
+  filter:drop-shadow(0 14px 22px rgba(0,0,0,.45));
+}
+.tt-hint{position:absolute; right:12px; top:12px; font:500 .68rem/1 var(--mono); color:var(--faint)}
+
+/* ---------- 7. hero-объект: смена ракурса ---------- */
+.stage.orbit{perspective:1000px; display:grid; place-items:center; touch-action:none; cursor:grab}
+.orbit-stage{position:relative; width:210px; height:210px; transform-style:preserve-3d;
+  transform:rotateX(var(--ox,-14deg)) rotateY(var(--oy,22deg))}
+.orbit-body{
+  position:absolute; inset:0; transform-style:preserve-3d;
+  transform:rotateY(calc(var(--spin,0) * 1deg));
+}
+.face{
+  position:absolute; left:50%; top:50%; width:118px; height:118px; margin:-59px 0 0 -59px;
+  border:1px solid var(--line); border-radius:var(--r-sm);
+  background:linear-gradient(140deg,rgba(123,196,168,.22),rgba(22,28,48,.92));
+  display:grid; place-items:center; font:500 .74rem/1.3 var(--mono); color:var(--body); text-align:center;
+}
+.face.f1{transform:rotateY(0deg) translateZ(59px)}
+.face.f2{transform:rotateY(90deg) translateZ(59px)}
+.face.f3{transform:rotateY(180deg) translateZ(59px)}
+.face.f4{transform:rotateY(270deg) translateZ(59px)}
+.orbit-axis{position:absolute; left:50%; top:0; bottom:0; width:1px; background:var(--line); transform:translateX(-.5px)}
+
+/* ---------- 4/5. SVG ---------- */
+.stage svg{display:block; width:100%; height:100%}
+/* <svg> по умолчанию overflow:hidden — и тогда view()-таймлайн цепляется к самой svg как к скролл-контейнеру
+   и не двигается никогда. Лечится только overflow:visible на svg и на всех скролл-предках. */
+.flow svg{overflow:visible}
+/* таймлайн вешаем на контейнер: у горизонтальной линии бокс нулевой высоты, и view() по ней не двигается */
+.stage.flow{overflow:visible; view-timeline-name:--flow}
+.flow path.wire{fill:none; stroke:var(--line); stroke-width:1.5}
+.flow path.rail{stroke:var(--line); stroke-width:1.5; stroke-dasharray:var(--len,600); stroke-dashoffset:var(--len,600)}
+.flow path.railraildots{stroke:var(--accent); opacity:.5}
+/* .svg-in стоит на том же элементе, что .flow, поэтому селектор через один класс: .flow.svg-in */
+.flow.svg-in path.rail{animation:draw 1200ms var(--ease) forwards}
+/* без JS и в reduce линии стоят нарисованными: контент не зависит от анимации */
+html:not(.js) .flow path.trace,html:not(.js) .flow path.rail{stroke-dashoffset:0}
+@supports (animation-timeline: view()){
+  /* трасса привязана к прокрутке: рисуется по мере входа секции в кадр (одинаковая специфичность с фолбэком, побеждает порядком) */
+  .flow.svg-in path.rail{animation:draw linear both; animation-timeline:--flow; animation-range:entry 5% cover 55%}
+}
+.flow path.trace{fill:none; stroke:var(--accent); stroke-width:2; stroke-linecap:round;
+  stroke-dasharray:var(--len,600); stroke-dashoffset:var(--len,600)}
+@keyframes draw{to{stroke-dashoffset:0}}
+.flow .node{fill:rgba(123,196,168,.10); stroke:rgba(255,255,255,.30); stroke-width:1.5}
+.flow text{font:500 11px var(--mono); fill:var(--meta)}
+.flow .pulse{fill:var(--accent); opacity:0}
+.flow .pulse.on{opacity:1; transition:opacity 400ms var(--ease) 900ms}
+.morphbox{display:grid; place-items:center; gap:10px}
+.morphbox svg{max-height:150px; overflow:visible}
+.morph-path{fill:none; stroke:var(--accent); stroke-width:2; stroke-linejoin:round}
+
+/* ---------- 6. разлёт/сборка ---------- */
+.assembly{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; padding:16px; height:100%}
+.part{
+  border:1px solid var(--line); border-radius:var(--r-sm); background:rgba(255,255,255,.035);
+  padding:10px; display:flex; flex-direction:column; justify-content:space-between; min-height:0;
+  transition:transform 520ms var(--ease-move), opacity 520ms var(--ease);
+  will-change:transform;
+}
+.part .k{font:500 .66rem/1 var(--mono); color:var(--meta)}
+.part .h{width:100%; height:8px; border-radius:3px; background:rgba(255,255,255,.14)}
+.part .h.a{background:rgba(var(--accent-rgb),.75)}
+.exploded .part{opacity:.94}
+.exploded .part[data-p="1"]{transform:translate(-46px,-34px) rotate(-7deg)}
+.exploded .part[data-p="2"]{transform:translate(0,-52px)}
+.exploded .part[data-p="3"]{transform:translate(46px,-34px) rotate(7deg)}
+.exploded .part[data-p="4"]{transform:translate(-46px,34px) rotate(7deg)}
+.exploded .part[data-p="5"]{transform:translate(0,52px)}
+.exploded .part[data-p="6"]{transform:translate(46px,34px) rotate(-7deg)}
+.assembly-note{position:absolute; left:12px; top:12px; font:500 .68rem/1 var(--mono); color:var(--faint)}
+
+/* ---------- 8. эффекты печати ---------- */
+.grain{position:absolute; inset:0; z-index:var(--z-float); pointer-events:none; opacity:.07; mix-blend-mode:overlay}
+.fxsel{display:flex; gap:8px; flex-wrap:wrap}
+
+/* ---------- reveal: контент виден без JS; скрывает только класс .js, который ставит скрипт ---------- */
+.js .rv{opacity:0; transform:translateY(14px); transition:opacity 620ms var(--ease), transform 620ms var(--ease)}
+.js .rv.in{opacity:1; transform:none}
+
+@media (max-width:900px){
+  .grid{grid-template-columns:1fr}
+  .fx,.fx.w4,.fx.w2,.fx.full{grid-column:span 1}
+  .h-320{height:260px}
+  .assembly{grid-template-columns:repeat(2,minmax(0,1fr))}
+  /* служебный текст на мобиле не мельче 12.5px */
+  .fact,.badge,.measure,.tt-hint,.assembly-note,.part .k,.tilt-front .cap{font-size:12.5px}
+}
+
+/* reduce: финальное состояние сразу, без движения */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .js .rv{opacity:1; transform:none; transition:none}
+  .tilt-inner,.orbit-stage,.orbit-body,.part{transition:none}
+  .tilt-inner{transform:none}
+  .flow.svg-in path.trace{animation:none; stroke-dashoffset:0}
+  .flow .pulse{opacity:1; transition:none}
+  .tt-sprite{background-position-x:calc(var(--frame-fixed,12) * -176px)}
+}
+/* тот же финал для ?reduce=1 — проверяемая ветка без CDP-эмуляции */
+html.force-reduce .js .rv{opacity:1; transform:none; transition:none}
+html.force-reduce .tilt-inner,html.force-reduce .orbit-stage,html.force-reduce .orbit-body,html.force-reduce .part{transition:none}
+html.force-reduce .tilt-inner{transform:none}
+html.force-reduce .flow.svg-in path.trace{animation:none; stroke-dashoffset:0}
+html.force-reduce .flow .pulse{opacity:1}
+html.force-reduce .tt-sprite{background-position-x:calc(var(--frame-fixed,12) * -176px)}
+html.force-reduce .flow path.rail{animation:none; stroke-dashoffset:0}
+;
+
+/* ===== 10-13. контуры, гравировка, детерминизм, ритм ===== */
+:root{ --hair:1px }
+
+/* 10. контуры: слои линий уровня, вылет 12% на параллакс */
+.stage.contour{background:radial-gradient(80% 70% at 50% 40%, #141a2b, var(--deep))}
+.scene{position:absolute; inset:0; overflow:hidden}
+.layer{position:absolute; inset:-12%; width:124%; height:124%; will-change:transform; transform-origin:50% 50%}
+.layer path{fill:none; shape-rendering:geometricPrecision; stroke-linecap:round;
+  vector-effect:non-scaling-stroke; stroke-width:var(--hair)}
+
+/* 13. полоски энергии ритма — поверх приборной канвы */
+.bars{position:absolute; left:12px; right:12px; bottom:12px; height:46px; z-index:var(--z-badge);
+  display:flex; align-items:flex-end; gap:2px; pointer-events:none}
+.bars i{flex:1; min-width:1px; background:var(--accent); border-radius:2px; opacity:.62}
+.bars i.spike{background:#e0796b; opacity:1}
+
+/* 12. ползунок кадра в ряду управления */
+.ctl label{display:inline-flex; align-items:center; gap:8px; font:500 .74rem/1 var(--mono); color:var(--meta)}
+.ctl input[type=range]{width:150px; max-width:42vw; accent-color:var(--accent)}
+
+@media (max-width:640px){
+  .bars{height:34px}
+  .ctl input[type=range]{width:112px}
+}
+@media (prefers-reduced-motion:reduce){
+  .layer{transition:none}
+}

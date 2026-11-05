@@ -1,0 +1,1819 @@
+{
+ "probes": {
+  "webgl2": {
+   "reduce": false,
+   "viewport": {
+    "innerW": 1422,
+    "clientW": 1407,
+    "scrollW": 1407,
+    "overflowX": 0,
+    "offenders": []
+   },
+   "fonts": "loaded",
+   "checks": {
+    "preserve3d": true,
+    "scrollTimeline": true,
+    "canvas2d": true
+   },
+   "tilt": {
+    "num": {
+     "layers": {
+      "back": -56,
+      "mid": -8,
+      "front": 58
+     },
+     "transform": "matrix(1, 0, 0, 1, 0, 0)"
+    }
+   },
+   "svgDraw": {
+    "num": {
+     "paths": 2,
+     "lengths": [
+      97,
+      98
+     ],
+     "dashBefore": "98px",
+     "scrollDriven": true,
+     "railLen": 380
+    }
+   },
+   "morph": {
+    "num": {
+     "shapes": 3,
+     "smil": true,
+     "waapiD": true,
+     "d": "M 40,20 C 24,20 20,26 20,42 C 20,94 24,100 40,100 C 176,100 180,94 180,42 C 180,26 176,20 160,20 Z"
+    }
+   },
+   "assembly": {
+    "num": {
+     "parts": 6
+    }
+   },
+   "orbit": {
+    "num": {
+     "faces": 4
+    }
+   },
+   "grain": {
+    "num": {
+     "tile": 128,
+     "opacity": "0.07",
+     "blend": "overlay"
+    }
+   },
+   "svgDrawAfter": {
+    "dashAfter": "0px",
+    "cls": "stage h-200 flow svg-in",
+    "pulse": true
+   },
+   "svgSeek": {
+    "finished": 2,
+    "scrollDrivenSkipped": 1,
+    "dash": "0px"
+   },
+   "morphAfter": {
+    "d": "M 40,20 C 24,20 20,26 20,42 C 20,94 24,100 40,100 C 176,100 180,94 180,42 C 180,26 176,20 160,20 Z",
+    "bbox": [
+     160,
+     94
+    ],
+    "next": "M 40,20 C 24,20 20,26 20"
+   },
+   "tiltAfter": {
+    "rx": "-9.00deg",
+    "ry": "12.00deg",
+    "rectInner": [
+     246,
+     204
+    ],
+    "rectFront": [
+     263,
+     217
+    ]
+   },
+   "assemblyProof": {
+    "assembled": [
+     {
+      "dx": 0,
+      "dy": 0,
+      "rot": 0
+     },
+     {
+      "dx": 0,
+      "dy": 0,
+      "rot": 0
+     },
+     {
+      "dx": 0,
+      "dy": 0,
+      "rot": 0
+     }
+    ],
+    "exploded": [
+     {
+      "dx": -46,
+      "dy": -34,
+      "rot": -7
+     },
+     {
+      "dx": 0,
+      "dy": -52,
+      "rot": 0
+     },
+     {
+      "dx": 46,
+      "dy": -34,
+      "rot": 7
+     }
+    ],
+    "differs": true
+   },
+   "orbitProof": {
+    "before": 22,
+    "after": 90,
+    "transform": "matrix3d(0, 0, -1, 0, 0, 1, 0, 0, 1, 0, "
+   },
+   "railDash": {
+    "before": "381px",
+    "after": "0px",
+    "top": 120
+   },
+   "diag": {
+    "pageAnimations": 19,
+    "traceAnimations": 1,
+    "railAnimations": 1,
+    "railTimeline": "ViewTimeline",
+    "railProgress": "0",
+    "railOverflowAncestor": "none"
+   },
+   "report": {
+    "displace": {
+     "tier": "webgl2",
+     "reason": null,
+     "canvas": [
+      700,
+      318
+     ]
+    },
+    "tilt": {
+     "layers": {
+      "back": -56,
+      "mid": -8,
+      "front": 58
+     },
+     "transform": "matrix(1, 0, 0, 1, 0, 0)"
+    },
+    "turntable": {
+     "frames": 36,
+     "sheetWidth": 6336,
+     "step": 176
+    },
+    "svg": {
+     "paths": 2,
+     "lengths": [
+      97,
+      98
+     ],
+     "dashBefore": "98px",
+     "scrollDriven": true,
+     "railLen": 380
+    },
+    "morph": {
+     "shapes": 3,
+     "smil": true,
+     "waapiD": true,
+     "d": "M 40,20 C 24,20 20,26 20,42 C 20,94 24,100 40,100 C 176,100 180,94 180,42 C 180,26 176,20 160,20 Z"
+    },
+    "assembly": {
+     "parts": 6
+    },
+    "orbit": {
+     "faces": 4
+    },
+    "grain": {
+     "tile": 128,
+     "opacity": "0.07",
+     "blend": "overlay"
+    },
+    "pixel": {
+     "printHalftone": {
+      "mean": 0.582,
+      "std": 0.2055
+     },
+     "printDither": {
+      "mean": 0.5855,
+      "std": 0.2396
+     },
+     "printGrain": {
+      "mean": 0.1433,
+      "std": 0.077
+     },
+     "printModeDiff": {
+      "mean": 0.1565,
+      "max": 0.54,
+      "changedFrac": 0.3836
+     },
+     "dispFlat": 0.1017,
+     "dispRelief": 0.1043,
+     "dispDiff": {
+      "mean": 0.0225,
+      "max": 0.503,
+      "changedFrac": 0.1247
+     },
+     "printMode": 1
+    },
+    "hair": {
+     "layers": 5,
+     "levels": 7,
+     "grid": "110x69",
+     "segments": 17496,
+     "buildMs": 140,
+     "dpr": 1,
+     "hairVarCss": "1px",
+     "strokeWidthCss": "1px",
+     "vectorEffect": "non-scaling-stroke",
+     "offsets": [
+      {
+       "d": 0.2,
+       "offsetAtP1": 5.2
+      },
+      {
+       "d": 0.4,
+       "offsetAtP1": 10.4
+      },
+      {
+       "d": 0.6,
+       "offsetAtP1": 15.6
+      },
+      {
+       "d": 0.8,
+       "offsetAtP1": 20.8
+      },
+      {
+       "d": 1,
+       "offsetAtP1": 26
+      }
+     ],
+     "monotonic": true,
+     "bleed": {
+      "insetCss": "-38.1562px -84px",
+      "leftDelta": -84
+     }
+    },
+    "engrave": {
+     "levels": 9,
+     "grid": 56,
+     "segments": 1574,
+     "lineWidthCss": 1,
+     "phase": 0.6
+    },
+    "scrub": {
+     "frame": 37,
+     "h1": "7f485e2",
+     "h2": "7f485e2",
+     "hOther": "c2be310a",
+     "sameFrameEqual": true,
+     "differsFromOther": true,
+     "deterministic": true,
+     "particles": 220,
+     "frames": 150
+    },
+    "qa": {
+     "energy": 3.3759,
+     "median": 3.3802,
+     "stillSec": 0,
+     "deadZone": false,
+     "spikeJustNow": false,
+     "window": 90,
+     "maxEnergy": 5.1497,
+     "driver": "синтетика 90 кадров @60fps"
+    },
+    "ttProof": {
+     "frame9": "-1584px",
+     "frame21": "-3696px",
+     "differs": true
+    },
+    "rects": {
+     "c-disp": [
+      162,
+      485,
+      700,
+      318
+     ],
+     "c-print": [
+      930,
+      2177,
+      316,
+      238
+     ],
+     "s-tilt": [
+      929,
+      535,
+      318,
+      280
+     ],
+     "tt-sprite": [
+      232,
+      1177,
+      176,
+      176
+     ],
+     "s-flow": [
+      545,
+      1058,
+      702,
+      200
+     ],
+     "s-asm": [
+      161,
+      1601,
+      702,
+      240
+     ],
+     "s-morph": [
+      929,
+      1667,
+      318,
+      240
+     ],
+     "s-orbit": [
+      161,
+      2103,
+      702,
+      280
+     ],
+     "c-part": [
+      162,
+      2723,
+      316,
+      238
+     ],
+     "scene": [
+      546,
+      2687,
+      700,
+      318
+     ],
+     "c-engrave": [
+      162,
+      3299,
+      316,
+      318
+     ],
+     "c-scrub": [
+      546,
+      3277,
+      700,
+      238
+     ],
+     "c-qa": [
+      162,
+      3881,
+      316,
+      238
+     ]
+    },
+    "doc": {
+     "scrollH": 4320,
+     "scrollW": 1407
+    },
+    "tiltProof": {
+     "rx": "6.60deg",
+     "ry": "9.60deg",
+     "applied": "matrix3d(0.985996, 0.0191679, -0.165664, 0, 0, 0.993373, 0.1",
+     "forcedByVars": "matrix3d(0.913545, -0.125689, 0.38683, 0, 0, 0.951057, 0.309",
+     "varsDriveTransform": true,
+     "restored": true,
+     "frontZ": 58
+    },
+    "tiltSamples": [
+     {
+      "t": 1125,
+      "rx": "6.60deg",
+      "applied": "matrix3d(0.985996, 0.0191679, -0.165664, 0, 0, 0.993373, 0.1"
+     },
+     {
+      "t": 1532,
+      "rx": "6.60deg",
+      "applied": "matrix3d(0.985996, 0.0191679, -0.165664, 0, 0, 0.993373, 0.1"
+     },
+     {
+      "t": 1741,
+      "rx": "6.60deg",
+      "applied": "matrix3d(0.985996, 0.0191679, -0.165664, 0, 0, 0.993373, 0.1"
+     },
+     {
+      "t": 2541,
+      "rx": "6.60deg",
+      "applied": "matrix3d(0.985996, 0.0191679, -0.165664, 0, 0, 0.993373, 0.1"
+     },
+     {
+      "t": 4141,
+      "rx": "6.60deg",
+      "applied": "matrix3d(0.985996, 0.0191679, -0.165664, 0, 0, 0.993373, 0.1"
+     }
+    ]
+   },
+   "print": {
+    "tier": "webgl2",
+    "mode": 1
+   },
+   "particles": {
+    "tier": "canvas 2d",
+    "count": 190,
+    "coverage": 0.175
+   },
+   "ttFrame": 0,
+   "orbitSpin": 22
+  },
+  "canvas2d": {
+   "reduce": false,
+   "viewport": {
+    "innerW": 1422,
+    "clientW": 1407,
+    "scrollW": 1407,
+    "overflowX": 0,
+    "offenders": []
+   },
+   "fonts": "loaded",
+   "checks": {
+    "preserve3d": true,
+    "scrollTimeline": true,
+    "canvas2d": true
+   },
+   "tilt": {
+    "num": {
+     "layers": {
+      "back": -56,
+      "mid": -8,
+      "front": 58
+     },
+     "transform": "matrix(1, 0, 0, 1, 0, 0)"
+    }
+   },
+   "svgDraw": {
+    "num": {
+     "paths": 2,
+     "lengths": [
+      97,
+      98
+     ],
+     "dashBefore": "98px",
+     "scrollDriven": true,
+     "railLen": 380
+    }
+   },
+   "morph": {
+    "num": {
+     "shapes": 3,
+     "smil": true,
+     "waapiD": true,
+     "d": "M 40,20 C 24,20 20,26 20,42 C 20,94 24,100 40,100 C 176,100 180,94 180,42 C 180,26 176,20 160,20 Z"
+    }
+   },
+   "assembly": {
+    "num": {
+     "parts": 6
+    }
+   },
+   "orbit": {
+    "num": {
+     "faces": 4
+    }
+   },
+   "grain": {
+    "num": {
+     "tile": 128,
+     "opacity": "0.07",
+     "blend": "overlay"
+    }
+   },
+   "svgDrawAfter": {
+    "dashAfter": "0px",
+    "cls": "stage h-200 flow svg-in",
+    "pulse": true
+   },
+   "svgSeek": {
+    "finished": 2,
+    "scrollDrivenSkipped": 1,
+    "dash": "0px"
+   },
+   "morphAfter": {
+    "d": "M 40,20 C 24,20 20,26 20,42 C 20,94 24,100 40,100 C 176,100 180,94 180,42 C 180,26 176,20 160,20 Z",
+    "bbox": [
+     160,
+     94
+    ],
+    "next": "M 40,20 C 24,20 20,26 20"
+   },
+   "tiltAfter": {
+    "rx": "-9.00deg",
+    "ry": "12.00deg",
+    "rectInner": [
+     246,
+     204
+    ],
+    "rectFront": [
+     263,
+     217
+    ]
+   },
+   "assemblyProof": {
+    "assembled": [
+     {
+      "dx": 0,
+      "dy": 0,
+      "rot": 0
+     },
+     {
+      "dx": 0,
+      "dy": 0,
+      "rot": 0
+     },
+     {
+      "dx": 0,
+      "dy": 0,
+      "rot": 0
+     }
+    ],
+    "exploded": [
+     {
+      "dx": -46,
+      "dy": -34,
+      "rot": -7
+     },
+     {
+      "dx": 0,
+      "dy": -52,
+      "rot": 0
+     },
+     {
+      "dx": 46,
+      "dy": -34,
+      "rot": 7
+     }
+    ],
+    "differs": true
+   },
+   "orbitProof": {
+    "before": 22,
+    "after": 90,
+    "transform": "matrix3d(0, 0, -1, 0, 0, 1, 0, 0, 1, 0, "
+   },
+   "railDash": {
+    "before": "381px",
+    "after": "0px",
+    "top": 120
+   },
+   "diag": {
+    "pageAnimations": 20,
+    "traceAnimations": 1,
+    "railAnimations": 1,
+    "railTimeline": "ViewTimeline",
+    "railProgress": "1",
+    "railOverflowAncestor": "none"
+   },
+   "report": {
+    "displace": {
+     "tier": "webgl2",
+     "reason": null,
+     "canvas": [
+      700,
+      318
+     ]
+    },
+    "tilt": {
+     "layers": {
+      "back": -56,
+      "mid": -8,
+      "front": 58
+     },
+     "transform": "matrix(1, 0, 0, 1, 0, 0)"
+    },
+    "turntable": {
+     "frames": 36,
+     "sheetWidth": 6336,
+     "step": 176
+    },
+    "svg": {
+     "paths": 2,
+     "lengths": [
+      97,
+      98
+     ],
+     "dashBefore": "98px",
+     "scrollDriven": true,
+     "railLen": 380
+    },
+    "morph": {
+     "shapes": 3,
+     "smil": true,
+     "waapiD": true,
+     "d": "M 40,20 C 24,20 20,26 20,42 C 20,94 24,100 40,100 C 176,100 180,94 180,42 C 180,26 176,20 160,20 Z"
+    },
+    "assembly": {
+     "parts": 6
+    },
+    "orbit": {
+     "faces": 4
+    },
+    "grain": {
+     "tile": 128,
+     "opacity": "0.07",
+     "blend": "overlay"
+    },
+    "pixel": {
+     "dispFlat": 0.1017,
+     "dispRelief": 0.1043,
+     "dispDiff": {
+      "mean": 0.0225,
+      "max": 0.503,
+      "changedFrac": 0.1247
+     }
+    },
+    "hair": {
+     "layers": 5,
+     "levels": 7,
+     "grid": "110x69",
+     "segments": 17496,
+     "buildMs": 111,
+     "dpr": 1,
+     "hairVarCss": "1px",
+     "strokeWidthCss": "1px",
+     "vectorEffect": "non-scaling-stroke",
+     "offsets": [
+      {
+       "d": 0.2,
+       "offsetAtP1": 5.2
+      },
+      {
+       "d": 0.4,
+       "offsetAtP1": 10.4
+      },
+      {
+       "d": 0.6,
+       "offsetAtP1": 15.6
+      },
+      {
+       "d": 0.8,
+       "offsetAtP1": 20.8
+      },
+      {
+       "d": 1,
+       "offsetAtP1": 26
+      }
+     ],
+     "monotonic": true,
+     "bleed": {
+      "insetCss": "-38.1562px -84px",
+      "leftDelta": -84
+     }
+    },
+    "engrave": {
+     "levels": 9,
+     "grid": 56,
+     "segments": 1574,
+     "lineWidthCss": 1,
+     "phase": 0.6
+    },
+    "scrub": {
+     "frame": 37,
+     "h1": "7f485e2",
+     "h2": "7f485e2",
+     "hOther": "c2be310a",
+     "sameFrameEqual": true,
+     "differsFromOther": true,
+     "deterministic": true,
+     "particles": 220,
+     "frames": 150
+    },
+    "qa": {
+     "energy": 3.3759,
+     "median": 3.3802,
+     "stillSec": 0,
+     "deadZone": false,
+     "spikeJustNow": false,
+     "window": 90,
+     "maxEnergy": 5.1497,
+     "driver": "синтетика 90 кадров @60fps"
+    },
+    "ttProof": {
+     "frame9": "-1584px",
+     "frame21": "-3696px",
+     "differs": true
+    },
+    "rects": {
+     "c-disp": [
+      162,
+      485,
+      700,
+      318
+     ],
+     "c-print": [
+      930,
+      2177,
+      316,
+      238
+     ],
+     "s-tilt": [
+      929,
+      535,
+      318,
+      280
+     ],
+     "tt-sprite": [
+      232,
+      1177,
+      176,
+      176
+     ],
+     "s-flow": [
+      545,
+      1058,
+      702,
+      200
+     ],
+     "s-asm": [
+      161,
+      1601,
+      702,
+      240
+     ],
+     "s-morph": [
+      929,
+      1667,
+      318,
+      240
+     ],
+     "s-orbit": [
+      161,
+      2103,
+      702,
+      280
+     ],
+     "c-part": [
+      162,
+      2723,
+      316,
+      238
+     ],
+     "scene": [
+      546,
+      2687,
+      700,
+      318
+     ],
+     "c-engrave": [
+      162,
+      3299,
+      316,
+      318
+     ],
+     "c-scrub": [
+      546,
+      3277,
+      700,
+      238
+     ],
+     "c-qa": [
+      162,
+      3881,
+      316,
+      238
+     ]
+    },
+    "doc": {
+     "scrollH": 4320,
+     "scrollW": 1407
+    },
+    "tiltProof": {
+     "rx": "6.60deg",
+     "ry": "9.60deg",
+     "applied": "matrix3d(0.985996, 0.0191679, -0.165664, 0, 0, 0.993373, 0.1",
+     "forcedByVars": "matrix3d(0.913545, -0.125689, 0.38683, 0, 0, 0.951057, 0.309",
+     "varsDriveTransform": true,
+     "restored": true,
+     "frontZ": 58
+    },
+    "tiltSamples": [
+     {
+      "t": 1411,
+      "rx": "6.60deg",
+      "applied": "matrix3d(0.985996, 0.0191679, -0.165664, 0, 0, 0.993373, 0.1"
+     },
+     {
+      "t": 1816,
+      "rx": "6.60deg",
+      "applied": "matrix3d(0.985996, 0.0191679, -0.165664, 0, 0, 0.993373, 0.1"
+     },
+     {
+      "t": 2024,
+      "rx": "6.60deg",
+      "applied": "matrix3d(0.985996, 0.0191679, -0.165664, 0, 0, 0.993373, 0.1"
+     },
+     {
+      "t": 2824,
+      "rx": "6.60deg",
+      "applied": "matrix3d(0.985996, 0.0191679, -0.165664, 0, 0, 0.993373, 0.1"
+     },
+     {
+      "t": 4424,
+      "rx": "6.60deg",
+      "applied": "matrix3d(0.985996, 0.0191679, -0.165664, 0, 0, 0.993373, 0.1"
+     }
+    ]
+   },
+   "print": {
+    "tier": "canvas 2d",
+    "mode": 1
+   },
+   "particles": {
+    "tier": "canvas 2d",
+    "count": 190,
+    "coverage": 0.175
+   },
+   "ttFrame": 0,
+   "orbitSpin": 22
+  },
+  "reduce": {
+   "reduce": true,
+   "viewport": {
+    "innerW": 1422,
+    "clientW": 1407,
+    "scrollW": 1407,
+    "overflowX": 0,
+    "offenders": []
+   },
+   "fonts": "loaded",
+   "checks": {
+    "preserve3d": true,
+    "scrollTimeline": true,
+    "canvas2d": true
+   },
+   "tilt": {
+    "num": {
+     "layers": {
+      "back": -56,
+      "mid": -8,
+      "front": 58
+     },
+     "transform": "none"
+    }
+   },
+   "svgDraw": {
+    "num": {
+     "paths": 2,
+     "lengths": [
+      97,
+      98
+     ],
+     "dashBefore": "0px",
+     "scrollDriven": true,
+     "railLen": 380
+    }
+   },
+   "morph": {
+    "num": {
+     "shapes": 3,
+     "smil": true,
+     "waapiD": true,
+     "d": "M 40,20 C 24,20 20,26 20,42 C 20,94 24,100 40,100 C 176,100 180,94 180,42 C 180,26 176,20 160,20 Z"
+    }
+   },
+   "assembly": {
+    "num": {
+     "parts": 6
+    }
+   },
+   "orbit": {
+    "num": {
+     "faces": 4
+    }
+   },
+   "grain": {
+    "num": {
+     "tile": 128,
+     "opacity": "0.07",
+     "blend": "overlay"
+    }
+   },
+   "svgDrawAfter": {
+    "dashAfter": "0px",
+    "cls": "stage h-200 flow svg-in",
+    "pulse": true
+   },
+   "svgSeek": {
+    "finished": 0,
+    "scrollDrivenSkipped": 0,
+    "dash": "0px"
+   },
+   "morphAfter": {
+    "d": "M 40,20 C 24,20 20,26 20,42 C 20,94 24,100 40,100 C 176,100 180,94 180,42 C 180,26 176,20 160,20 Z",
+    "bbox": [
+     160,
+     94
+    ],
+    "next": "M 40,20 C 24,20 20,26 20"
+   },
+   "tiltAfter": {
+    "rx": "-9.00deg",
+    "ry": "12.00deg",
+    "rectInner": [
+     246,
+     200
+    ],
+    "rectFront": [
+     263,
+     214
+    ]
+   },
+   "assemblyProof": {
+    "assembled": [
+     {
+      "dx": 0,
+      "dy": 0,
+      "rot": 0
+     },
+     {
+      "dx": 0,
+      "dy": 0,
+      "rot": 0
+     },
+     {
+      "dx": 0,
+      "dy": 0,
+      "rot": 0
+     }
+    ],
+    "exploded": [
+     {
+      "dx": -46,
+      "dy": -34,
+      "rot": -7
+     },
+     {
+      "dx": 0,
+      "dy": -52,
+      "rot": 0
+     },
+     {
+      "dx": 46,
+      "dy": -34,
+      "rot": 7
+     }
+    ],
+    "differs": true
+   },
+   "orbitProof": {
+    "before": 22,
+    "after": 90,
+    "transform": "matrix3d(0, 0, -1, 0, 0, 1, 0, 0, 1, 0, "
+   },
+   "railDash": {
+    "before": "0px",
+    "after": "0px",
+    "top": 120
+   },
+   "diag": {
+    "pageAnimations": 4,
+    "traceAnimations": 0,
+    "railAnimations": 0,
+    "railTimeline": "",
+    "railProgress": "n/a",
+    "railOverflowAncestor": "none"
+   },
+   "report": {
+    "displace": {
+     "tier": "webgl2",
+     "reason": null,
+     "canvas": [
+      700,
+      318
+     ]
+    },
+    "tilt": {
+     "layers": {
+      "back": -56,
+      "mid": -8,
+      "front": 58
+     },
+     "transform": "none"
+    },
+    "turntable": {
+     "frames": 36,
+     "sheetWidth": 6336,
+     "step": 176
+    },
+    "svg": {
+     "paths": 2,
+     "lengths": [
+      97,
+      98
+     ],
+     "dashBefore": "0px",
+     "scrollDriven": true,
+     "railLen": 380
+    },
+    "morph": {
+     "shapes": 3,
+     "smil": true,
+     "waapiD": true,
+     "d": "M 40,20 C 24,20 20,26 20,42 C 20,94 24,100 40,100 C 176,100 180,94 180,42 C 180,26 176,20 160,20 Z"
+    },
+    "assembly": {
+     "parts": 6
+    },
+    "orbit": {
+     "faces": 4
+    },
+    "grain": {
+     "tile": 128,
+     "opacity": "0.07",
+     "blend": "overlay"
+    },
+    "pixel": {
+     "printHalftone": {
+      "mean": 0.582,
+      "std": 0.2055
+     },
+     "printDither": {
+      "mean": 0.5855,
+      "std": 0.2396
+     },
+     "printGrain": {
+      "mean": 0.1433,
+      "std": 0.077
+     },
+     "printModeDiff": {
+      "mean": 0.1565,
+      "max": 0.54,
+      "changedFrac": 0.3836
+     },
+     "dispFlat": 0.1017,
+     "dispRelief": 0.1043,
+     "dispDiff": {
+      "mean": 0.0225,
+      "max": 0.503,
+      "changedFrac": 0.1247
+     },
+     "printMode": 1
+    },
+    "hair": {
+     "layers": 5,
+     "levels": 7,
+     "grid": "110x69",
+     "segments": 17496,
+     "buildMs": 169,
+     "dpr": 1,
+     "hairVarCss": "1px",
+     "strokeWidthCss": "1px",
+     "vectorEffect": "non-scaling-stroke",
+     "offsets": [
+      {
+       "d": 0.2,
+       "offsetAtP1": 5.2
+      },
+      {
+       "d": 0.4,
+       "offsetAtP1": 10.4
+      },
+      {
+       "d": 0.6,
+       "offsetAtP1": 15.6
+      },
+      {
+       "d": 0.8,
+       "offsetAtP1": 20.8
+      },
+      {
+       "d": 1,
+       "offsetAtP1": 26
+      }
+     ],
+     "monotonic": true,
+     "bleed": {
+      "insetCss": "-38.1562px -84px",
+      "leftDelta": -84
+     }
+    },
+    "engrave": {
+     "levels": 9,
+     "grid": 56,
+     "segments": 1574,
+     "lineWidthCss": 1,
+     "phase": 0.6
+    },
+    "scrub": {
+     "frame": 37,
+     "h1": "7f485e2",
+     "h2": "7f485e2",
+     "hOther": "c2be310a",
+     "sameFrameEqual": true,
+     "differsFromOther": true,
+     "deterministic": true,
+     "particles": 220,
+     "frames": 150
+    },
+    "qa": {
+     "energy": 3.3759,
+     "median": 3.3802,
+     "stillSec": 0,
+     "deadZone": false,
+     "spikeJustNow": false,
+     "window": 90,
+     "maxEnergy": 5.1497,
+     "driver": "синтетика 90 кадров @60fps"
+    },
+    "ttProof": {
+     "frame9": "-1584px",
+     "frame21": "-3696px",
+     "differs": true
+    },
+    "rects": {
+     "c-disp": [
+      162,
+      485,
+      700,
+      318
+     ],
+     "c-print": [
+      930,
+      2177,
+      316,
+      238
+     ],
+     "s-tilt": [
+      929,
+      535,
+      318,
+      280
+     ],
+     "tt-sprite": [
+      232,
+      1177,
+      176,
+      176
+     ],
+     "s-flow": [
+      545,
+      1058,
+      702,
+      200
+     ],
+     "s-asm": [
+      161,
+      1601,
+      702,
+      240
+     ],
+     "s-morph": [
+      929,
+      1667,
+      318,
+      240
+     ],
+     "s-orbit": [
+      161,
+      2103,
+      702,
+      280
+     ],
+     "c-part": [
+      162,
+      2723,
+      316,
+      238
+     ],
+     "scene": [
+      546,
+      2687,
+      700,
+      318
+     ],
+     "c-engrave": [
+      162,
+      3299,
+      316,
+      318
+     ],
+     "c-scrub": [
+      546,
+      3277,
+      700,
+      238
+     ],
+     "c-qa": [
+      162,
+      3881,
+      316,
+      238
+     ]
+    },
+    "doc": {
+     "scrollH": 4320,
+     "scrollW": 1407
+    },
+    "tiltProof": {
+     "rx": "0.00deg",
+     "ry": "0.00deg",
+     "applied": "none",
+     "forcedByVars": "none",
+     "varsDriveTransform": false,
+     "restored": true,
+     "frontZ": 58
+    },
+    "tiltSamples": [
+     {
+      "t": 1775,
+      "rx": "0",
+      "applied": "none"
+     },
+     {
+      "t": 2186,
+      "rx": "0.00deg",
+      "applied": "none"
+     },
+     {
+      "t": 2402,
+      "rx": "0.00deg",
+      "applied": "none"
+     },
+     {
+      "t": 3201,
+      "rx": "0.00deg",
+      "applied": "none"
+     },
+     {
+      "t": 4801,
+      "rx": "0.00deg",
+      "applied": "none"
+     }
+    ]
+   },
+   "print": {
+    "tier": "webgl2",
+    "mode": 1
+   },
+   "particles": {
+    "tier": "canvas 2d",
+    "count": 190,
+    "coverage": 0.175
+   },
+   "ttFrame": 12,
+   "orbitSpin": 22
+  },
+  "default": {
+   "reduce": false,
+   "viewport": {
+    "innerW": 1422,
+    "clientW": 1407,
+    "scrollW": 1407,
+    "overflowX": 0,
+    "offenders": []
+   },
+   "fonts": "loaded",
+   "checks": {
+    "preserve3d": true,
+    "scrollTimeline": true,
+    "canvas2d": true
+   },
+   "tilt": {
+    "num": {
+     "layers": {
+      "back": -56,
+      "mid": -8,
+      "front": 58
+     },
+     "transform": "matrix(1, 0, 0, 1, 0, 0)"
+    }
+   },
+   "svgDraw": {
+    "num": {
+     "paths": 2,
+     "lengths": [
+      97,
+      98
+     ],
+     "dashBefore": "98px",
+     "scrollDriven": true,
+     "railLen": 380
+    }
+   },
+   "morph": {
+    "num": {
+     "shapes": 3,
+     "smil": true,
+     "waapiD": true,
+     "d": "M 40,20 C 24,20 20,26 20,42 C 20,94 24,100 40,100 C 176,100 180,94 180,42 C 180,26 176,20 160,20 Z"
+    }
+   },
+   "assembly": {
+    "num": {
+     "parts": 6
+    }
+   },
+   "orbit": {
+    "num": {
+     "faces": 4
+    }
+   },
+   "grain": {
+    "num": {
+     "tile": 128,
+     "opacity": "0.07",
+     "blend": "overlay"
+    }
+   },
+   "svgDrawAfter": {
+    "dashAfter": "0px",
+    "cls": "stage h-200 flow svg-in",
+    "pulse": true
+   },
+   "svgSeek": {
+    "finished": 2,
+    "scrollDrivenSkipped": 1,
+    "dash": "0px"
+   },
+   "morphAfter": {
+    "d": "M 40,20 C 24,20 20,26 20,42 C 20,94 24,100 40,100 C 176,100 180,94 180,42 C 180,26 176,20 160,20 Z",
+    "bbox": [
+     160,
+     94
+    ],
+    "next": "M 40,20 C 24,20 20,26 20"
+   },
+   "tiltAfter": {
+    "rx": "-9.00deg",
+    "ry": "12.00deg",
+    "rectInner": [
+     246,
+     204
+    ],
+    "rectFront": [
+     263,
+     217
+    ]
+   },
+   "assemblyProof": {
+    "assembled": [
+     {
+      "dx": 0,
+      "dy": 0,
+      "rot": 0
+     },
+     {
+      "dx": 0,
+      "dy": 0,
+      "rot": 0
+     },
+     {
+      "dx": 0,
+      "dy": 0,
+      "rot": 0
+     }
+    ],
+    "exploded": [
+     {
+      "dx": -46,
+      "dy": -34,
+      "rot": -7
+     },
+     {
+      "dx": 0,
+      "dy": -52,
+      "rot": 0
+     },
+     {
+      "dx": 46,
+      "dy": -34,
+      "rot": 7
+     }
+    ],
+    "differs": true
+   },
+   "orbitProof": {
+    "before": 22,
+    "after": 90,
+    "transform": "matrix3d(0, 0, -1, 0, 0, 1, 0, 0, 1, 0, "
+   },
+   "railDash": {
+    "before": "381px",
+    "after": "0px",
+    "top": 120
+   },
+   "diag": {
+    "pageAnimations": 19,
+    "traceAnimations": 1,
+    "railAnimations": 1,
+    "railTimeline": "ViewTimeline",
+    "railProgress": "0",
+    "railOverflowAncestor": "none"
+   },
+   "report": {
+    "displace": {
+     "tier": "webgl2",
+     "reason": null,
+     "canvas": [
+      700,
+      318
+     ]
+    },
+    "tilt": {
+     "layers": {
+      "back": -56,
+      "mid": -8,
+      "front": 58
+     },
+     "transform": "matrix(1, 0, 0, 1, 0, 0)"
+    },
+    "turntable": {
+     "frames": 36,
+     "sheetWidth": 6336,
+     "step": 176
+    },
+    "svg": {
+     "paths": 2,
+     "lengths": [
+      97,
+      98
+     ],
+     "dashBefore": "98px",
+     "scrollDriven": true,
+     "railLen": 380
+    },
+    "morph": {
+     "shapes": 3,
+     "smil": true,
+     "waapiD": true,
+     "d": "M 40,20 C 24,20 20,26 20,42 C 20,94 24,100 40,100 C 176,100 180,94 180,42 C 180,26 176,20 160,20 Z"
+    },
+    "assembly": {
+     "parts": 6
+    },
+    "orbit": {
+     "faces": 4
+    },
+    "grain": {
+     "tile": 128,
+     "opacity": "0.07",
+     "blend": "overlay"
+    },
+    "printChain": [],
+    "pixel": {
+     "dispFlat": 0.1017,
+     "dispRelief": 0.1043,
+     "dispDiff": {
+      "mean": 0.0225,
+      "max": 0.503,
+      "changedFrac": 0.1247
+     }
+    },
+    "hair": {
+     "layers": 5,
+     "levels": 7,
+     "grid": "110x69",
+     "segments": 17496,
+     "buildMs": 106,
+     "dpr": 1,
+     "hairVarCss": "1px",
+     "strokeWidthCss": "1px",
+     "vectorEffect": "non-scaling-stroke",
+     "offsets": [
+      {
+       "d": 0.2,
+       "offsetAtP1": 5.2
+      },
+      {
+       "d": 0.4,
+       "offsetAtP1": 10.4
+      },
+      {
+       "d": 0.6,
+       "offsetAtP1": 15.6
+      },
+      {
+       "d": 0.8,
+       "offsetAtP1": 20.8
+      },
+      {
+       "d": 1,
+       "offsetAtP1": 26
+      }
+     ],
+     "monotonic": true,
+     "bleed": {
+      "insetCss": "-38.1562px -84px",
+      "leftDelta": -84
+     }
+    },
+    "engrave": {
+     "levels": 9,
+     "grid": 56,
+     "segments": 1574,
+     "lineWidthCss": 1,
+     "phase": 0.6
+    },
+    "scrub": {
+     "frame": 37,
+     "h1": "7f485e2",
+     "h2": "7f485e2",
+     "hOther": "c2be310a",
+     "sameFrameEqual": true,
+     "differsFromOther": true,
+     "deterministic": true,
+     "particles": 220,
+     "frames": 150
+    },
+    "qa": {
+     "energy": 3.3759,
+     "median": 3.3802,
+     "stillSec": 0,
+     "deadZone": false,
+     "spikeJustNow": false,
+     "window": 90,
+     "maxEnergy": 5.1497,
+     "driver": "синтетика 90 кадров @60fps"
+    },
+    "ttProof": {
+     "frame9": "-1584px",
+     "frame21": "-3696px",
+     "differs": true
+    },
+    "rects": {
+     "c-disp": [
+      162,
+      485,
+      700,
+      318
+     ],
+     "c-print": [
+      930,
+      2177,
+      316,
+      238
+     ],
+     "s-tilt": [
+      929,
+      535,
+      318,
+      280
+     ],
+     "tt-sprite": [
+      232,
+      1177,
+      176,
+      176
+     ],
+     "s-flow": [
+      545,
+      1058,
+      702,
+      200
+     ],
+     "s-asm": [
+      161,
+      1601,
+      702,
+      240
+     ],
+     "s-morph": [
+      929,
+      1667,
+      318,
+      240
+     ],
+     "s-orbit": [
+      161,
+      2103,
+      702,
+      280
+     ],
+     "c-part": [
+      162,
+      2723,
+      316,
+      238
+     ],
+     "scene": [
+      546,
+      2687,
+      700,
+      318
+     ],
+     "c-engrave": [
+      162,
+      3299,
+      316,
+      318
+     ],
+     "c-scrub": [
+      546,
+      3277,
+      700,
+      238
+     ],
+     "c-qa": [
+      162,
+      3881,
+      316,
+      238
+     ]
+    },
+    "doc": {
+     "scrollH": 4320,
+     "scrollW": 1407
+    },
+    "tiltProof": {
+     "rx": "6.60deg",
+     "ry": "9.60deg",
+     "applied": "matrix3d(0.985996, 0.0191679, -0.165664, 0, 0, 0.993373, 0.1",
+     "forcedByVars": "matrix3d(0.913545, -0.125689, 0.38683, 0, 0, 0.951057, 0.309",
+     "varsDriveTransform": true,
+     "restored": true,
+     "frontZ": 58
+    },
+    "tiltSamples": [
+     {
+      "t": 1133,
+      "rx": "6.60deg",
+      "applied": "matrix3d(0.985996, 0.0191679, -0.165664, 0, 0, 0.993373, 0.1"
+     },
+     {
+      "t": 1540,
+      "rx": "6.60deg",
+      "applied": "matrix3d(0.985996, 0.0191679, -0.165664, 0, 0, 0.993373, 0.1"
+     },
+     {
+      "t": 1749,
+      "rx": "6.60deg",
+      "applied": "matrix3d(0.985996, 0.0191679, -0.165664, 0, 0, 0.993373, 0.1"
+     },
+     {
+      "t": 2549,
+      "rx": "6.60deg",
+      "applied": "matrix3d(0.985996, 0.0191679, -0.165664, 0, 0, 0.993373, 0.1"
+     },
+     {
+      "t": 4149,
+      "rx": "6.60deg",
+      "applied": "matrix3d(0.985996, 0.0191679, -0.165664, 0, 0, 0.993373, 0.1"
+     }
+    ]
+   },
+   "print": null,
+   "particles": {
+    "tier": "canvas 2d",
+    "count": 190,
+    "coverage": 0.175
+   },
+   "ttFrame": 0,
+   "orbitSpin": 22
+  }
+ },
+ "shots": [
+  {
+   "file": "desktop-full.png",
+   "bytes": 1192146,
+   "size": [
+    1440,
+    4360
+   ],
+   "mean": 30.6,
+   "std": 29.6,
+   "nonblank": 1.0,
+   "regions": {
+    "c-disp": {
+     "mean": 27.2,
+     "std": 19.9
+    },
+    "c-print": {
+     "mean": 126.7,
+     "std": 59.8
+    },
+    "s-tilt": {
+     "mean": 38.2,
+     "std": 25.0
+    },
+    "tt-sprite": {
+     "mean": 70.1,
+     "std": 57.7
+    },
+    "s-flow": {
+     "mean": 21.7,
+     "std": 13.9
+    },
+    "s-asm": {
+     "mean": 28.7,
+     "std": 18.4
+    },
+    "s-morph": {
+     "mean": 23.0,
+     "std": 23.4
+    },
+    "s-orbit": {
+     "mean": 22.6,
+     "std": 15.2
+    },
+    "c-part": {
+     "mean": 32.2,
+     "std": 33.5
+    },
+    "scene": {
+     "mean": 42.8,
+     "std": 34.3
+    },
+    "c-engrave": {
+     "mean": 25.0,
+     "std": 21.1
+    },
+    "c-scrub": {
+     "mean": 24.1,
+     "std": 21.0
+    },
+    "c-qa": {
+     "mean": 28.4,
+     "std": 34.2
+    }
+   }
+  },
+  {
+   "file": "desktop-viewport.png",
+   "bytes": 244104,
+   "size": [
+    1440,
+    900
+   ],
+   "mean": 30.4,
+   "std": 30.9,
+   "nonblank": 1.0,
+   "regions": {
+    "c-disp": {
+     "mean": 27.2,
+     "std": 19.9
+    },
+    "s-tilt": {
+     "mean": 38.2,
+     "std": 25.0
+    }
+   }
+  }
+ ],
+ "mobile": {
+  "probe": "clientW=375 scrollW=375 ovf=0 innerW=390 offenders=[\"path.[object SVGAnima→383\",\"path.[object SVGAnima→383\",\"path.[object SVGAnima→383\",\"path.[object SVGAnima→383\",\"path.[object SVGAnima→383\"] smallText=[]",
+  "seconds": 2.5
+ },
+ "checks": {
+  "проба читается": true,
+  "нет переполнения по X": true,
+  "дисплейсмент: рельеф меняет пиксели": true,
+  "печать: три режима дают разные кадры": true,
+  "line-draw доходит до нуля": true,
+  "трасса скроллом двигается": true,
+  "морфинг меняет форму": true,
+  "разлёт меняет позы": true,
+  "поворот доходит до грани": true,
+  "спрайт-лист шагает": true,
+  "переменные двигают панель": true,
+  "фолбэк canvas2d поднимается": true,
+  "reduce-ветка отдаёт финал": true,
+  "кадр снят": true,
+  "мобильная проба снята": true,
+  "10: контуры нарисованы": true,
+  "10: штрих не масштабируется": true,
+  "10: параллакс растёт по глубине": true,
+  "10: слой вылетает за вьюпорт": true,
+  "11: гравировка считает линии": true,
+  "12: кадр равен сам себе": true,
+  "12: кадр отличается от соседнего": true,
+  "12: кадр совпал между запусками": true,
+  "13: прибор ритма отдаёт числа": true,
+  "10-13: кадр секции снят": true,
+  "ни один блок не пустой": true
+ },
+ "contrast": {
+  "ink на bg": 16.17,
+  "body на bg": 10.22,
+  "meta на bg": 5.87,
+  "faint на bg": 4.92,
+  "accent на bg": 8.91,
+  "текст кнопки на btn": 5.04,
+  "body на card": 9.51
+ },
+ "ink": {
+  "c-disp": 15.68,
+  "c-print": 77.33,
+  "s-tilt": 36.74,
+  "tt-sprite": 60.19,
+  "s-flow": 2.68,
+  "s-asm": 8.47,
+  "s-morph": 3.45,
+  "s-orbit": 8.03,
+  "c-part": 15.66,
+  "scene": 30.64,
+  "c-engrave": 8.34,
+  "c-scrub": 5.79,
+  "c-qa": 6.77
+ },
+ "emptyBlocks": []
+}

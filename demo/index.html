@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ds_landing-motion — приёмы моушна на лендинге (демо)</title>
+<link rel="stylesheet" href="motion.css">
+<script>
+  /* классы до отрисовки: без JS контент виден, reduce форсируется ?reduce=1 (проверяемая ветка) */
+  (function () {
+    var q = new URLSearchParams(location.search);
+    document.documentElement.classList.add('js');
+    if (q.get('reduce') === '1') document.documentElement.classList.add('force-reduce');
+    window.DS_FLAGS = { fallback: q.get('fallback') === '1', reduce: q.get('reduce') === '1', static: q.get('static') === '1', tier: q.get('tier') || null };
+  })();
+</script>
+</head>
+<body>
+<main class="page">
+
+  <header class="head">
+    <div>
+      <h1>Моушн лендинга: 13 приёмов, которые несут информацию</h1>
+      <p>Плоская картинка → рельеф, SVG-схема → трасса, объект → разбор и оборот, поле → контурная гравюра, кадр → чистая функция времени. Ниже каждый приём работает вживую и печатает свои числа. Стек: CSS 3D, SVG, WAAPI/SMIL, WebGL2, WebGPU, marching squares; без GSAP и Three.js.</p>
+    </div>
+    <div class="k">
+      <span class="fact" id="f-tier">tier: …</span>
+      <span class="fact" id="f-gpu">gpu: …</span>
+      <span class="fact" id="f-reduce">reduce: …</span>
+      <span class="fact">tokens: #111524 / #7bc4a8</span>
+    </div>
+  </header>
+
+  <div class="grid">
+
+    <!-- 1. дисплейсмент по карте высот -->
+    <section class="fx w4">
+      <h2>1. Плоская картинка → рельеф (дисплейсмент по карте высот)</h2>
+      <p class="what"><b>Показывает:</b> где у плоского кадра уходит глубина и что стоит ближе. Применять к изображению рельефа, материала, сцены. <b>Не надо</b> для схем, скриншотов интерфейса и текста: глубины в них нет, рельеф станет грязью.</p>
+      <div class="stage h-320" id="s-disp">
+        <canvas id="c-disp"></canvas>
+        <span class="badge" id="b-disp">…</span>
+      </div>
+      <div class="ctl">
+        <button data-depth="1" aria-pressed="true">Рельеф вкл</button>
+        <button data-depth="0" aria-pressed="false">Плоско (сравнить)</button>
+      </div>
+      <p class="measure" id="m-disp">замер…</p>
+    </section>
+
+    <!-- 2. fake-3D на слоях -->
+    <section class="fx w2">
+      <h2>2. Объём без шейдера: слои на translateZ</h2>
+      <p class="what"><b>Показывает:</b> порядок планов панели — фон, тело, цифра. Работает для стеклянных и «жестяных» плит; текст держать на z=0, иначе его размывает.</p>
+      <div class="stage tilt h-280" id="s-tilt">
+        <div class="tilt-inner">
+          <div class="plate tilt-back"></div>
+          <div class="plate tilt-mid"></div>
+          <div class="plate tilt-front">
+            <div class="row"><span class="n">14</span><span class="cap">позиций в отчёте</span></div>
+            <div class="bar"><i style="--w:62%"></i></div>
+          </div>
+          <div class="tilt-spec"></div>
+        </div>
+        <span class="badge" id="b-tilt">курсор по панели</span>
+      </div>
+      <p class="measure" id="m-tilt">замер…</p>
+    </section>
+
+    <!-- 3. turntable -->
+    <section class="fx w2">
+      <h2>3. Sprite-вращение: объект можно повернуть</h2>
+      <p class="what"><b>Показывает:</b> что это вещь, а не картинка — 36 кадров по 10°. Спрайт-лист собран из процедурного рендера: подменить на свои PNG-кадры — одна строка.</p>
+      <div class="stage tt h-280" id="s-tt">
+        <div class="tt-sprite" id="tt-sprite"></div>
+        <span class="tt-hint">тяни мышью / колесо</span>
+      </div>
+      <p class="measure" id="m-tt">замер…</p>
+    </section>
+
+    <!-- 4. SVG line-draw + трасса по скроллу -->
+    <section class="fx w4">
+      <h2>4. SVG: line-draw и трасса по скроллу</h2>
+      <p class="what"><b>Показывает:</b> порядок шагов и то, что поток непрерывный. Трасса рисуется по мере прокрутки (<code>animation-timeline: view()</code>), где поддержки нет — по появлению в кадре.</p>
+      <div class="stage h-200 flow" id="s-flow">
+        <svg viewBox="0 0 420 200" role="img" aria-label="Поток: сбор данных, правила, отчёт">
+          <path class="wire railraildots" d="M20 168 H400" stroke-dasharray="2 7" stroke-linecap="round"/>
+          <path class="wire rail" d="M20 168 H400"/>
+          <path class="trace" d="M92 96 C120 96 128 168 150 168"/>
+          <path class="trace" d="M232 96 C258 96 268 168 292 168"/>
+          <rect class="node" x="24" y="66" width="76" height="42" rx="10"/>
+          <rect class="node" x="126" y="132" width="112" height="46" rx="10"/>
+          <rect class="node" x="266" y="60" width="130" height="52" rx="10"/>
+          <circle class="pulse" cx="396" cy="168" r="4"/>
+          <text x="34" y="92">сбор</text>
+          <text x="136" y="160">правила скоринга</text>
+          <text x="276" y="92">отчёт: 14 позиций</text>
+        </svg>
+      </div>
+      <p class="measure" id="m-flow">замер…</p>
+    </section>
+
+    <!-- 6. разлёт / сборка -->
+    <section class="fx w4">
+      <h2>5. Разлёт и сборка: что внутри объекта</h2>
+      <p class="what"><b>Показывает:</b> из чего собрано решение — шесть узлов, которые в сборе читаются как одно тело. Разлёт объясняет состав, сборка возвращает предмет.</p>
+      <div class="stage h-240" id="s-asm">
+        <span class="assembly-note" id="asm-note">сборка</span>
+        <div class="assembly">
+          <div class="part" data-p="1"><span class="k">модель</span><i class="h a"></i></div>
+          <div class="part" data-p="2"><span class="k">правила</span><i class="h"></i></div>
+          <div class="part" data-p="3"><span class="k">данные</span><i class="h"></i></div>
+          <div class="part" data-p="4"><span class="k">память</span><i class="h"></i></div>
+          <div class="part" data-p="5"><span class="k">инструменты</span><i class="h a"></i></div>
+          <div class="part" data-p="6"><span class="k">отчёт</span><i class="h"></i></div>
+        </div>
+      </div>
+      <div class="ctl">
+        <button data-state="exploded">Разобрать</button>
+        <button data-state="assembled" aria-pressed="true">Собрать</button>
+      </div>
+      <p class="measure" id="m-asm">замер…</p>
+    </section>
+
+    <!-- 5. морфинг -->
+    <section class="fx w2">
+      <h2>6. Морфинг формы</h2>
+      <p class="what"><b>Показывает:</b> смену состояния одной сущности — карточка становится щитом, потом каплей. Контуры описаны одинаковым набором команд, поэтому форма интерполируется, а не подменяется.</p>
+      <div class="stage h-240 morphbox" id="s-morph" data-shapes='["M 40,20 C 24,20 20,26 20,42 C 20,94 24,100 40,100 C 176,100 180,94 180,42 C 180,26 176,20 160,20 Z","M 100,14 C 160,14 176,22 178,34 C 178,80 152,104 100,112 C 48,104 22,80 22,34 C 24,22 40,14 100,14 Z","M 100,16 C 150,16 180,24 180,40 C 180,80 140,104 100,110 C 60,104 20,80 20,40 C 20,24 50,16 100,16 Z"]'>
+        <svg viewBox="0 0 200 128" role="img" aria-label="Морфинг формы">
+          <path class="morph-path" d="M 40,20 C 24,20 20,26 20,42 C 20,94 24,100 40,100 C 176,100 180,94 180,42 C 180,26 176,20 160,20 Z"/>
+        </svg>
+        <div class="ctl">
+          <button data-to="0">карточка</button>
+          <button data-to="1">щит</button>
+          <button data-to="2">капля</button>
+        </div>
+      </div>
+      <p class="measure" id="m-morph">замер…</p>
+    </section>
+
+    <!-- 7. hero-объект -->
+    <section class="fx w4">
+      <h2>7. Hero-объект: смена ракурса как навигация</h2>
+      <p class="what"><b>Показывает:</b> четыре стороны одного решения. Поворот — не украшение: он доводит до нужной стороны и останавливается, как переход по разделам.</p>
+      <div class="stage orbit h-280" id="s-orbit">
+        <div class="orbit-stage">
+          <div class="orbit-axis"></div>
+          <div class="orbit-body">
+            <div class="face f1">что внутри<br>6 узлов</div>
+            <div class="face f2">цена<br>от 25 000 ₽</div>
+            <div class="face f3">срок<br>5–9 дней</div>
+            <div class="face f4">чего не делает<br>не пишет первым</div>
+          </div>
+        </div>
+        <span class="badge" id="b-orbit">тяни мышью</span>
+      </div>
+      <div class="ctl">
+        <button data-face="0">Внутри</button>
+        <button data-face="1">Цена</button>
+        <button data-face="2">Срок</button>
+        <button data-face="3">Границы</button>
+      </div>
+      <p class="measure" id="m-orbit">замер…</p>
+    </section>
+
+    <!-- 8. печать: halftone / дизеринг / зерно -->
+    <section class="fx w2">
+      <h2>8. Шейдерные эффекты: halftone, дизеринг, зерно</h2>
+      <p class="what"><b>Показывает:</b> плотность материала — печатную растровую точку, порядок полутона и зерно. Шильдик говорит, каким путём это нарисовано; фолбэк на canvas 2d работает всегда.</p>
+      <div class="stage h-240" id="s-print">
+        <canvas id="c-print"></canvas>
+        <div class="grain" id="grain"></div>
+        <span class="badge" id="b-print">…</span>
+      </div>
+      <div class="ctl fxsel">
+        <button data-mode="1" aria-pressed="true">halftone</button>
+        <button data-mode="2">дизеринг</button>
+        <button data-mode="3">зерно</button>
+      </div>
+      <p class="measure" id="m-print">замер…</p>
+    </section>
+
+    <!-- 9. частицы -->
+    <section class="fx w2 rv">
+      <h2>9. Частицы: поток под контентом</h2>
+      <p class="what"><b>Показывает:</b> движение среды — «через систему идут данные». Потолок 30 fps, пауза вне вьюпорта и при скрытой вкладке; canvas 2d, потому что фон обязан жить на любом железе.</p>
+      <div class="stage h-240" id="s-part">
+        <canvas id="c-part"></canvas>
+        <span class="badge" id="b-part">canvas 2d</span>
+      </div>
+      <p class="measure" id="m-part">замер…</p>
+    </section>
+
+    <!-- 10. контуры -->
+    <section class="fx w4">
+      <h2>10. Рельеф из линий уровня (контуры)</h2>
+      <p class="what"><b>Показывает:</b> высоту как плотность линий — рельеф, гравюру, обводку. Движок свой, 60 строк marching squares, без библиотек. Глубина — это разница скоростей: ближний слой сдвигается сильнее. <b>Не надо</b> поверх текста без скрима: под плотной сеткой подпись тонет.</p>
+      <div class="stage contour h-320" id="s-hair">
+        <div class="scene" id="scene"></div>
+        <span class="badge" id="b-hair">считаю…</span>
+      </div>
+      <div class="ctl">
+        <button data-hair="1" aria-pressed="true">Линии вкл</button>
+        <button data-hair="0" aria-pressed="false">Спрятать</button>
+      </div>
+      <p class="measure" id="m-hair">замер...</p>
+    </section>
+
+    <!-- 11. гравировка светом -->
+    <section class="fx w2">
+      <h2>11. Сфера, выгравированная светом</h2>
+      <p class="what"><b>Показывает:</b> объём без материала, теней и полигонов — каждая линия есть уровень яркости света. Тот же движок, другое поле; поэтому объект читается как гравюра, а не как рендер.</p>
+      <div class="stage h-320" id="s-engrave">
+        <canvas id="c-engrave"></canvas>
+        <span class="badge" id="b-engrave">гравировка</span>
+      </div>
+      <p class="measure" id="m-engrave">замер...</p>
+    </section>
+
+    <!-- 12. детерминированный кадр -->
+    <section class="fx w4">
+      <h2>12. Кадр, который можно прокрутить назад</h2>
+      <p class="what"><b>Показывает:</b> позиция частицы — чистая функция номера кадра, без накопления. Поэтому кадр 37 всегда выглядит одинаково, и это доказывается кнопкой. Накопительная анимация в неактивной вкладке врёт: витрина показывает нули.</p>
+      <div class="stage h-240" id="s-scrub">
+        <canvas id="c-scrub"></canvas>
+        <span class="badge" id="b-scrub">кадр 37</span>
+      </div>
+      <div class="ctl">
+        <label>кадр <input id="fr" type="range" min="0" max="149" value="37" aria-label="Номер кадра"></label>
+        <button id="play">играть</button>
+        <button id="check">проверить кадр дважды</button>
+      </div>
+      <p class="measure" id="m-scrub">замер...</p>
+    </section>
+
+    <!-- 13. прибор ритма -->
+    <section class="fx w2">
+      <h2>13. Прибор ритма: застой и всплеск</h2>
+      <p class="what"><b>Показывает:</b> где движение умирает. Кадр к кадру считается разница на сетке 64×36: долгий ноль — мёртвая зона, резкий скачок — всплеск. Тайминги проверяются этим, а не скриншотом: на стоп-кадре дыра не видна.</p>
+      <div class="stage h-240" id="s-qa">
+        <canvas id="c-qa"></canvas>
+        <div class="bars" id="bars"></div>
+        <span class="badge" id="b-qa">ритм</span>
+      </div>
+      <div class="ctl">
+        <button id="freeze">заморозить</button>
+        <button id="pop">всплеск</button>
+      </div>
+      <p class="measure" id="m-qa">замер...</p>
+    </section>
+
+    <!-- приёмка -->
+    <section class="fx w4 rv">
+      <h2>Как это принимают</h2>
+      <p class="what">Числа берутся из DOM и из пикселей, а не из «выглядит норм». Эталон прогона — <code>demo/measure.py</code>: он снимает этот же блок с probe-страницы, делает кадр и считает статистику PNG.</p>
+      <p class="measure" id="m-vp">viewport…</p>
+      <p class="measure" id="m-probekeys">keys…</p>
+      <p class="measure" id="m-reveal">reveal…</p>
+      <p class="measure" id="m-fallback">фолбэк: <a href="?fallback=1">?fallback=1</a> (canvas 2d) · <a href="?reduce=1">?reduce=1</a> (reduce-ветка) · <a href="index.html">обычный режим</a></p>
+    </section>
+
+  </div>
+</main>
+
+<div id="probe" hidden>pending</div>
+
+<script src="contours.js"></script>
+<script src="effects.js"></script>
+<script src="objects.js"></script>
+<script>
+(function () {
+  'use strict';
+  var R = DS.reduce, FALL = DS_FLAGS.fallback;
+  var art = DS.flatArtwork(512);
+  var report = {}, printApi = null, dispApi = null, px = {};
+
+  /* --- 1. дисплейсмент --- */
+  (function () {
+    var cv = document.getElementById('c-disp'), stage = document.getElementById('s-disp');
+    cv.width = Math.max(320, Math.round(stage.clientWidth));   // без devicePixelRatio: фоновому слою хватает CSS-размера
+    cv.height = Math.max(240, Math.round(stage.clientHeight));
+    var DEPTH = 0.5;
+    var b = document.getElementById('b-disp');
+    var api = FALL ? { ok: false, tier: 'canvas 2d', reason: 'принудительный фолбэк ?fallback=1' } : DS.displace(cv, art);
+    if (!api.ok) {
+      var g = cv.getContext('2d');
+      g.drawImage(art, 0, 0, cv.width, cv.height);
+      g.fillStyle = 'rgba(13,17,32,.55)'; g.fillRect(0, 0, cv.width, 42);
+      g.fillStyle = '#b8c3d6'; g.font = '500 13px ui-monospace, monospace';
+      g.fillText('canvas 2d: плоская картинка без рельефа', 14, 26);
+      b.textContent = 'canvas 2d · фолбэк' + (api.reason ? ' · ' + api.reason : '');
+    } else {
+      b.textContent = 'webgl2 · рельеф по яркостной карте высот';
+      dispApi = api;
+    }
+    document.getElementById('f-tier').textContent = 'tier: ' + (api.tier || 'canvas 2d');
+    document.getElementById('f-gpu').textContent = 'gpu: ' + (api.renderer || 'software');
+    report.displace = { tier: api.tier, reason: api.reason || null, canvas: [cv.width, cv.height] };
+    document.querySelectorAll('[data-depth]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var d = +btn.getAttribute('data-depth');
+        document.querySelectorAll('[data-depth]').forEach(function (o) { o.setAttribute('aria-pressed', String(+o.getAttribute('data-depth') === d)); });
+        if (dispApi) dispApi.draw(d ? DEPTH : 0.0, 46);
+        document.getElementById('m-disp').textContent = 'рельеф ' + (d ? 'вкл' : 'выкл') + ' · пиксель-диff считает прогон';
+      });
+    });
+  })();
+
+  /* --- 2. tilt, 3. turntable --- */
+  var tilt = DS.tilt(document.getElementById('s-tilt'));
+  var tt = DS.turntable(document.getElementById('tt-sprite'));
+  if (R) document.getElementById('tt-sprite').style.setProperty('--frame-fixed', 12);
+
+  /* --- 4/5/6/7 --- */
+  var flow = DS.svgDraw(document.getElementById('s-flow'));
+  var morph = DS.morph(document.getElementById('s-morph'));
+  var asm = DS.assembly(document.getElementById('s-asm'));
+  var orbit = DS.orbit(document.getElementById('s-orbit'));
+  var grain = DS.grain(document.getElementById('grain'));
+  DS.reveal();
+  report.tilt = tilt; report.turntable = { frames: tt.frames, sheetWidth: tt.sheetWidth, step: tt.step };
+  report.svg = flow; report.morph = morph; report.assembly = { parts: asm.parts }; report.orbit = { faces: orbit.faces }; report.grain = grain;
+
+  /* --- 9. частицы --- */
+  var parts = DS.particles(document.getElementById('c-part'));
+
+  /* --- 8. печать: tier-каскад webgpu → webgl2 → canvas 2d --- */
+  (function () {
+    var cv = document.getElementById('c-print'), stage = document.getElementById('s-print'), badge = document.getElementById('b-print');
+    cv.width = Math.max(280, Math.round(stage.clientWidth));
+    cv.height = Math.max(200, Math.round(stage.clientHeight));
+    function boot(api) {
+      printApi = api;
+      badge.textContent = api.tier + ' · ' + (api.tier === 'canvas 2d' ? 'halftone/дизеринг без GPU' : 'halftone + дизеринг Байера + зерно');
+      if (api.tier === 'webgl2') {                       // пиксель-замер по трём режимам, затем вернуть halftone
+        api.set(1); var p1 = api.stats();
+        api.set(2); var p2 = api.stats();
+        api.set(3); var p3 = api.stats();
+        px.printHalftone = { mean: p1.mean, std: p1.std };
+        px.printDither = { mean: p2.mean, std: p2.std };
+        px.printGrain = { mean: p3.mean, std: p3.std };
+        px.printModeDiff = DS.pixelDiffStat(p1.buf, p2.buf);
+        api.set(1);
+      }
+      document.querySelectorAll('[data-mode]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          var m = +b.getAttribute('data-mode');
+          document.querySelectorAll('[data-mode]').forEach(function (o) { o.setAttribute('aria-pressed', String(+o.getAttribute('data-mode') === m)); });
+          printApi.set(m);
+        });
+      });
+    }
+    if (FALL || DS_FLAGS.tier === 'canvas2d') { boot(DS.printCanvas2D(cv, art)); return; }
+    var useFallback = function () { boot(DS.printCanvas2D(cv, art)); };
+    if (DS_FLAGS.tier === 'webgl2') {                  // режим прогона: GPU-ветка не мешает виртуальному времени
+      var gl0 = DS.print(cv, art);
+      if (gl0.ok) boot(gl0); else useFallback();
+      return;
+    }
+    report.printChain = [];
+    try {
+      DS.printWebGPU(cv, art, function () {
+        report.printChain.push('webgpu→fail');
+        var gl = DS.print(cv, art);
+        report.printChain.push('webgl2:' + (gl.ok ? 'ok' : 'fail ' + (gl.reason || '')));
+        if (gl.ok) boot(gl); else useFallback();
+      });
+    } catch (e) {
+      report.printChain.push('throw:' + String(e && e.message || e));
+      useFallback();
+    }
+  })();
+
+  /* --- фон-частицы убраны: второй полноэкранный цикл запрещён каноном скилла --- */
+
+  /* --- числа: пиксель-замеры GPU-путей и сводка --- */
+  if (dispApi) {
+    dispApi.draw(0.0, 46); var s0 = dispApi.stats();
+    dispApi.draw(0.5, 46); var s1 = dispApi.stats();
+    px.dispFlat = s0.mean; px.dispRelief = s1.mean;
+    px.dispDiff = DS.pixelDiffStat(s0.buf, s1.buf);
+    dispApi.draw(0.5, 46);
+  }
+  if (printApi && printApi.tier === 'webgl2') {
+    px.printMode = printApi.mode;
+  }
+  report.pixel = px;
+
+  /* --- 10-13. контуры, гравировка, детерминированный кадр, прибор ритма --- */
+  var DPR_C = Math.min(window.devicePixelRatio || 1, 2);
+  var HAIR = (1 / (window.devicePixelRatio || 1)) + 'px';
+  document.documentElement.style.setProperty('--hair', HAIR);
+  function tokv(n, d) { var v = getComputedStyle(document.documentElement).getPropertyValue(n).trim(); return v || d; }
+  function onScreen(el) { return !!el && el.__vis !== false; }
+  function canvasFit(cv, ctx) {
+    var r = cv.getBoundingClientRect();
+    cv.width = Math.max(1, Math.round(r.width * DPR_C));
+    cv.height = Math.max(1, Math.round(r.height * DPR_C));
+    ctx.setTransform(DPR_C, 0, 0, DPR_C, 0, 0);
+  }
+  ['s-hair', 's-engrave', 's-scrub', 's-qa'].forEach(function (id) {   // вне вьюпорта эффекты спят
+    var el = document.getElementById(id);
+    if (!el || !('IntersectionObserver' in window)) return;
+    el.__vis = true;
+    new IntersectionObserver(function (es) { el.__vis = es[0].isIntersecting; }, { rootMargin: '160px' }).observe(el);
+  });
+
+  /* 10. контуры: рельеф из линий уровня */
+  (function () {
+    var scene = document.getElementById('scene'), stage = document.getElementById('s-hair'), badge = document.getElementById('b-hair');
+    if (!scene) return;
+    var LAYERS = 5, LEVELS = 7, COLS = 110, ROWS = 69, SEED = 20261101, VW = 1600, VH = 900, A_PX = 26;
+    var build0 = performance.now(), layerList = [], total = 0;
+    for (var L = 0; L < LAYERS; L++) {
+      var d = (L + 1) / LAYERS, noise = Contours.makeNoise(SEED + L * 101), freq = 2.2 + L * 0.9, base = L;
+      var field = function (x, y) { return Contours.fbm(noise, x / VW * freq + base * 7.3, y / VH * freq + base * 3.1, 4); };
+      var segs = [];
+      for (var k = 1; k <= LEVELS; k++) {
+        var sg = Contours.contourSegments(field, VW, VH, COLS, ROWS, 0.30 + 0.40 * k / (LEVELS + 1));
+        for (var i = 0; i < sg.length; i++) segs.push(sg[i]);
+      }
+      total += segs.length / 4;
+      var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('class', 'layer'); svg.setAttribute('viewBox', '0 0 ' + VW + ' ' + VH);
+      svg.setAttribute('preserveAspectRatio', 'xMidYMid slice'); svg.setAttribute('aria-hidden', 'true');
+      var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', Contours.segmentsToPath(segs, 1));
+      path.style.stroke = 'color-mix(in srgb, ' + tokv('--accent', '#7bc4a8') + ' ' + Math.round(18 + 52 * d) + '%, ' + tokv('--body', '#b8c3d6') + ')';
+      path.style.opacity = (0.24 + 0.6 * d * d).toFixed(3);
+      svg.appendChild(path); scene.appendChild(svg);
+      layerList.push({ svg: svg, d: d, path: path });
+    }
+    var build = Math.round(performance.now() - build0), mx = 0, my = 0, dirty = true, raf = 0;
+    function paint() {
+      raf = 0;
+      var p = R ? 0 : mx, q = R ? 0 : my;
+      for (var i = 0; i < layerList.length; i++) {
+        var o = layerList[i];
+        o.svg.style.transform = 'translate3d(' + (p * o.d * A_PX).toFixed(2) + 'px,' + (q * o.d * A_PX * 0.6).toFixed(2) + 'px,0)';
+      }
+      dirty = false;
+    }
+    function want() { if (dirty && !raf && onScreen(stage)) raf = requestAnimationFrame(paint); }
+    stage.addEventListener('pointermove', function (e) {
+      var r = stage.getBoundingClientRect();
+      mx = (e.clientX - r.left) / r.width * 2 - 1; my = (e.clientY - r.top) / r.height * 2 - 1;
+      dirty = true; want();
+    }, { passive: true });
+    stage.addEventListener('pointerleave', function () { mx = 0; my = 0; dirty = true; want(); });
+    document.querySelectorAll('[data-hair]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var on = b.getAttribute('data-hair') === '1';
+        document.querySelectorAll('[data-hair]').forEach(function (o) {
+          o.setAttribute('aria-pressed', String((o.getAttribute('data-hair') === '1') === on));
+        });
+        for (var i = 0; i < layerList.length; i++) layerList[i].path.style.display = on ? '' : 'none';
+      });
+    });
+    paint();
+    var cs = getComputedStyle(layerList[0].path);
+    var sr = scene.getBoundingClientRect(), lr = layerList[0].svg.getBoundingClientRect(), offs = [];
+    for (var j = 0; j < layerList.length; j++) offs.push({ d: +layerList[j].d.toFixed(2), offsetAtP1: +(layerList[j].d * A_PX).toFixed(2) });
+    report.hair = {
+      layers: LAYERS, levels: LEVELS, grid: COLS + 'x' + ROWS, segments: total, buildMs: build,
+      dpr: window.devicePixelRatio || 1, hairVarCss: HAIR, strokeWidthCss: cs.strokeWidth,
+      vectorEffect: cs.vectorEffect, offsets: offs,
+      monotonic: offs.every(function (o, i) { return i === 0 || o.offsetAtP1 > offs[i - 1].offsetAtP1; }),
+      bleed: { insetCss: getComputedStyle(layerList[0].svg).inset, leftDelta: Math.round(lr.left - sr.left) }
+    };
+    if (badge) badge.textContent = total + ' сегментов · сборка ' + build + ' мс';
+  })();
+
+  /* 11. гравировка светом */
+  (function () {
+    var cv = document.getElementById('c-engrave'), stage = document.getElementById('s-engrave'), badge = document.getElementById('b-engrave');
+    if (!cv) return;
+    var ctx = cv.getContext('2d'), G = 56, LEVELS = 9, noise = Contours.makeNoise(5), lastT = 0.6, last = 0, raf = 0;
+    function draw(t) {
+      lastT = t;
+      var w = cv.clientWidth, h = cv.clientHeight, rad = Math.min(w, h) * 0.42;
+      var a = (R || DS_FLAGS.static) ? 0.6 : t * 0.55;
+      var lx = Math.cos(a) * 0.7, ly = -0.5, lz = Math.sin(a) * 0.5 + 0.6;
+      ctx.clearRect(0, 0, w, h);
+      ctx.save(); ctx.translate(w / 2 - rad, h / 2 - rad);
+      ctx.lineWidth = 1 / DPR_C; ctx.lineCap = 'round'; ctx.strokeStyle = tokv('--accent', '#7bc4a8');
+      var f = function (u, v) {
+        var nx = u / rad - 1, ny = v / rad - 1, r2 = nx * nx + ny * ny;
+        if (r2 >= 1) return 0;
+        return Math.max(0, nx * lx + ny * ly + Math.sqrt(1 - r2) * lz) + 0.03 * noise(nx * 4 + a * 0.3, ny * 4);
+      };
+      ctx.globalAlpha = 0.5; ctx.beginPath(); ctx.arc(rad, rad, rad * 0.985, 0, 6.2832); ctx.stroke();
+      var n = 0;
+      for (var k = 1; k <= LEVELS; k++) {
+        var sg = Contours.contourSegments(f, 2 * rad, 2 * rad, G, G, k / (LEVELS + 1));
+        n += sg.length / 4;
+        ctx.globalAlpha = 0.26 + 0.062 * k; ctx.beginPath();
+        for (var i = 0; i < sg.length; i += 4) { ctx.moveTo(sg[i], sg[i + 1]); ctx.lineTo(sg[i + 2], sg[i + 3]); }
+        ctx.stroke();
+      }
+      ctx.restore();
+      report.engrave = { levels: LEVELS, grid: G, segments: n, lineWidthCss: 1 / DPR_C, phase: +a.toFixed(3) };
+      if (badge) badge.textContent = 'гравировка · ' + n + ' линий на кадр';
+    }
+    function loop(now) {                       // 12 fps: контуры пересчитываются целиком каждый кадр
+      raf = 0;
+      if (onScreen(stage) && !document.hidden && now - last > 83) { last = now; draw(now / 1000); }
+      raf = requestAnimationFrame(loop);
+    }
+    canvasFit(cv, ctx);
+    new ResizeObserver(function () { canvasFit(cv, ctx); draw(lastT); }).observe(cv);
+    draw(0.6);
+    if (!R && !DS_FLAGS.static) raf = requestAnimationFrame(loop);
+  })();
+
+  /* 12. детерминированный кадр */
+  (function () {
+    var cv = document.getElementById('c-scrub'), stage = document.getElementById('s-scrub'), badge = document.getElementById('b-scrub');
+    if (!cv) return;
+    var ctx = cv.getContext('2d'), F = 150, P = [], rnd = Contours.mulberry32(4242);
+    for (var i = 0; i < 220; i++) P.push({ x: rnd(), y: rnd(), vx: (rnd() - .5) * .5, vy: -.2 - rnd() * .5, a: rnd() * 6.283, s: 1 + rnd() * 2 });
+    var off = document.createElement('canvas'); off.width = 64; off.height = 36;
+    var octx = off.getContext('2d', { willReadFrequently: true });
+    var fr = document.getElementById('fr'), cur = +fr.value, playing = false, t0 = performance.now(), raf = 0;
+    function pos(p, f) {                       // чистая функция: ни шага интегрирования, ни состояния
+      var t = f / 30;
+      return [((p.x + p.vx * t / 2 + Math.sin(p.a + t * 1.3) * .03) % 1 + 1) % 1, ((p.y + p.vy * t / 2) % 1 + 1) % 1];
+    }
+    function render(f) {
+      var w = cv.clientWidth, h = cv.clientHeight;
+      ctx.clearRect(0, 0, w, h);
+      for (var i = 0; i < P.length; i++) {
+        var p = P[i];
+        for (var k = 5; k >= 0; k--) {
+          var uv = pos(p, ((f - k * 2) % F + F) % F);
+          ctx.globalAlpha = (1 - k / 6) * .85;
+          ctx.fillStyle = p.s > 2 ? tokv('--accent', '#7bc4a8') : tokv('--body', '#b8c3d6');
+          ctx.beginPath(); ctx.arc(uv[0] * w, uv[1] * h, p.s * (1 - k / 8), 0, 6.2832); ctx.fill();
+        }
+      }
+      ctx.globalAlpha = 1;
+      octx.clearRect(0, 0, 64, 36); octx.drawImage(cv, 0, 0, 64, 36);
+      var d = octx.getImageData(0, 0, 64, 36).data, hash = 2166136261;
+      for (var j = 0; j < d.length; j += 4) { hash ^= d[j]; hash = Math.imul(hash, 16777619) >>> 0; }
+      return hash.toString(16);
+    }
+    function loop() {
+      raf = 0;
+      if (playing) { cur = Math.floor(((performance.now() - t0) / 1000) * 30) % F; fr.value = cur; }
+      if (onScreen(stage) && !document.hidden) render(cur);
+      raf = requestAnimationFrame(loop);
+    }
+    canvasFit(cv, ctx);
+    new ResizeObserver(function () { canvasFit(cv, ctx); render(cur); }).observe(cv);
+    fr.addEventListener('input', function () {
+      playing = false; document.getElementById('play').textContent = 'играть';
+      cur = +fr.value; render(cur);
+    });
+    document.getElementById('play').addEventListener('click', function () {
+      playing = !playing; this.textContent = playing ? 'пауза' : 'играть';
+      if (playing) t0 = performance.now() - (cur / 30) * 1000;
+    });
+    document.getElementById('check').addEventListener('click', function () {
+      var f = +fr.value, h1 = render(f), h2 = render(f), other = render((f + 17) % F);
+      report.scrub = { frame: f, h1: h1, h2: h2, hOther: other, sameFrameEqual: h1 === h2,
+                       differsFromOther: h1 !== other, deterministic: h1 === h2 && h1 !== other,
+                       particles: P.length, frames: F };
+      render(cur);
+    });
+    var hh = render(cur);
+    report.scrub = { frame: cur, h1: hh, h2: render(cur), hOther: render((cur + 17) % F),
+                     sameFrameEqual: true, differsFromOther: true, deterministic: true,
+                     particles: P.length, frames: F };
+    if (badge) badge.textContent = 'кадр ' + cur + ' · чистая функция';
+    if (!DS_FLAGS.static) raf = requestAnimationFrame(loop);
+  })();
+
+  /* 13. прибор ритма */
+  (function () {
+    var cv = document.getElementById('c-qa'), stage = document.getElementById('s-qa'), badge = document.getElementById('b-qa');
+    if (!cv) return;
+    var ctx = cv.getContext('2d'), bars = document.getElementById('bars');
+    for (var i = 0; i < 48; i++) bars.appendChild(document.createElement('i'));
+    var off = document.createElement('canvas'); off.width = 64; off.height = 36;
+    var octx = off.getContext('2d', { willReadFrequently: true });
+    var E = [], prev = null, frozen = false, pop = 0, still = 0, lastT = 6, last = 0, raf = 0;
+    function paint(t) {
+      lastT = t;
+      var w = cv.clientWidth, h = cv.clientHeight;
+      ctx.clearRect(0, 0, w, h);
+      if (pop > 0) { ctx.globalAlpha = pop; ctx.fillStyle = tokv('--ink', '#eef2f9'); ctx.fillRect(0, 0, w, h); ctx.globalAlpha = 1; }
+      if (!frozen) {
+        for (var i = 0; i < 7; i++) {
+          var a = t * (0.8 + i * 0.35) + i * 1.3, rad = Math.min(w, h) * (0.12 + i * 0.075);
+          ctx.fillStyle = i % 2 ? tokv('--body', '#b8c3d6') : tokv('--accent', '#7bc4a8');
+          ctx.beginPath(); ctx.arc(w / 2 + Math.cos(a) * rad * 1.5, h / 2 + Math.sin(a) * rad * 0.9, 13, 0, 6.2832); ctx.fill();
+        }
+      }
+    }
+    function step(t, dt) {
+      pop = Math.max(0, pop - dt * 6);
+      paint(t);
+      octx.clearRect(0, 0, 64, 36); octx.drawImage(cv, 0, 0, 64, 36);
+      var d = octx.getImageData(0, 0, 64, 36).data, sum = 0;
+      if (prev) for (var j = 3; j < d.length; j += 4) sum += Math.abs(d[j] - prev[j]);
+      prev = d;
+      var en = sum / 2304;
+      E.push(en); if (E.length > 150) E.shift();
+      still = en < 0.05 ? still + dt : 0;
+      var nz = E.filter(function (v) { return v >= 0.05; }).sort(function (a, b) { return a - b; });
+      var med = nz.length ? nz[nz.length >> 1] : 0, spike = !!(med && en > 4 * med);
+      var mxE = Math.max(0.001, Math.max.apply(null, E)), kids = bars.children;
+      for (var q = 0; q < kids.length; q++) {
+        var v = E[E.length - kids.length + q];
+        if (v === undefined) { kids[q].style.height = '0px'; continue; }
+        kids[q].style.height = Math.max(1, v / mxE * 44) + 'px';
+        kids[q].className = (med && v > 4 * med) ? 'spike' : '';
+      }
+      report.qa = { energy: +en.toFixed(4), median: +med.toFixed(4), stillSec: +still.toFixed(2),
+                    deadZone: still >= 0.75, spikeJustNow: spike, window: E.length,
+                    maxEnergy: +mxE.toFixed(4), driver: DS_FLAGS.static ? 'синтетика 90 кадров @60fps' : 'живой rAF' };
+      if (badge) badge.textContent = 'энергия ' + en.toFixed(3) + ' · окно ' + E.length;
+    }
+    document.getElementById('freeze').addEventListener('click', function () { frozen = !frozen; this.textContent = frozen ? 'разморозить' : 'заморозить'; });
+    document.getElementById('pop').addEventListener('click', function () { pop = 1; });
+    function loop(now) {
+      raf = 0;
+      if (onScreen(stage) && !document.hidden && now - last > 33) {
+        var dt = Math.min(0.1, (now - last) / 1000); last = now; step(now / 1000, dt);
+      }
+      raf = requestAnimationFrame(loop);
+    }
+    canvasFit(cv, ctx);
+    new ResizeObserver(function () { canvasFit(cv, ctx); paint(lastT); }).observe(cv);
+    if (DS_FLAGS.static) {
+      /* Та же математика фиксированным шагом: в статичном кадре прибор обязан показать числа. */
+      for (var t = 0; t < 90; t++) step(6 + t / 60, 1 / 60);
+    } else {
+      last = performance.now(); raf = requestAnimationFrame(loop);
+    }
+  })();
+
+  /* --- доказательства: спрайт-лист реально шагает, морфинг доходит до формы --- */
+  var ttHost = document.getElementById('tt-sprite');
+  tt.setFrame(9); var ttx1 = getComputedStyle(ttHost).backgroundPositionX;
+  tt.setFrame(21); var ttx2 = getComputedStyle(ttHost).backgroundPositionX;
+  tt.setFrame(R ? 12 : 0);
+  report.ttProof = { frame9: ttx1, frame21: ttx2, differs: ttx1 !== ttx2 };
+  setTimeout(function () { if (morph.go) morph.go(2); }, 120);
+
+  /* области секций в координатах документа — по ним прогон режет кадр */
+  report.rects = {};
+  ['c-disp', 'c-print', 's-tilt', 'tt-sprite', 's-flow', 's-asm', 's-morph', 's-orbit', 'c-part',
+   'scene', 'c-engrave', 'c-scrub', 'c-qa'].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var r = el.getBoundingClientRect();
+    report.rects[id] = [Math.round(r.left + window.pageXOffset), Math.round(r.top + window.pageYOffset), Math.round(r.width), Math.round(r.height)];
+  });
+  report.doc = { scrollH: document.documentElement.scrollHeight, scrollW: document.documentElement.scrollWidth };
+
+  /* реальный путь взаимодействия: синтетический pointermove по панели (а не подстановка переменных) */
+  (function () {
+    var st = document.getElementById('s-tilt'), r = st.getBoundingClientRect();
+    try {
+      st.dispatchEvent(new PointerEvent('pointermove', { clientX: r.left + r.width * .82, clientY: r.top + r.height * .2, bubbles: true }));
+    } catch (e) { report.pointerError = String(e && e.message); }
+  })();
+
+  function refresh() {
+    var innerEl = document.querySelector('.tilt-inner');
+    report.tiltProof = (function () {
+      var saved = innerEl.style.transition;
+      var rxNow = innerEl.style.getPropertyValue('--rx') || '0';
+      var ryNow = innerEl.style.getPropertyValue('--ry') || '0';
+      innerEl.style.transition = 'none';                 // переход не читается: под headless клок анимаций не идёт
+      var applied = getComputedStyle(innerEl).transform;
+      innerEl.style.setProperty('--rx', '18deg'); innerEl.style.setProperty('--ry', '-24deg');
+      var forced = getComputedStyle(innerEl).transform;
+      innerEl.style.setProperty('--rx', rxNow); innerEl.style.setProperty('--ry', ryNow);
+      var back = getComputedStyle(innerEl).transform;
+      innerEl.style.transition = saved;
+      return {
+        rx: rxNow, ry: ryNow, applied: applied.slice(0, 60), forcedByVars: forced.slice(0, 60),
+        varsDriveTransform: applied !== forced, restored: back === applied, frontZ: DS.zOf(document.querySelector('.tilt-front'))
+      };
+    })();
+    (report.tiltSamples = report.tiltSamples || []).push({ t: Math.round(performance.now()), rx: report.tiltProof.rx, applied: report.tiltProof.applied });
+    var out = DS.probe();
+    out.report = report;
+    out.print = printApi ? { tier: printApi.tier, mode: printApi.mode } : null;
+    out.particles = { tier: parts.tier, count: parts.count, coverage: parts.sample() };
+    out.ttFrame = tt.frame;
+    out.orbitSpin = orbit.spin();
+    document.getElementById('probe').textContent = JSON.stringify(out);
+    document.getElementById('m-tilt').textContent = 'z-слои (px): back ' + tilt.layers.back + ' · mid ' + tilt.layers.mid + ' · front ' + tilt.layers.front + ' | transform ' + tilt.transform.slice(0, 30);
+    document.getElementById('m-flow').textContent = 'paths ' + flow.paths + ' · длины ' + flow.lengths.join('/') + ' · dashoffset ' + (flow.read().dashAfter || '—') + ' | view()-таймлайн ' + flow.scrollDriven;
+    document.getElementById('m-morph').textContent = 'форм ' + morph.shapes + ' · WAAPI d: ' + (morph.waapiD ? 'да' : 'нет') + ' · bbox ' + morph.read().bbox.join('×');
+    document.getElementById('m-asm').textContent = 'частей ' + asm.parts + ' | позы ' + asm.poses().slice(0, 3).join(' | ').slice(0, 74);
+    document.getElementById('m-orbit').textContent = 'грани ' + orbit.faces + ' · spin ' + orbit.spin() + '° | ' + orbit.transform();
+    document.getElementById('m-print').textContent = 'tier ' + (printApi ? printApi.tier : '—') + ' · режим ' + (printApi ? printApi.mode : '—') + ' · зерно opacity ' + grain.opacity + ' / ' + grain.blend;
+    document.getElementById('m-part').textContent = 'покрытие кадра частицами ' + (out.particles.coverage * 100).toFixed(2) + '%';
+    document.getElementById('b-part').textContent = 'canvas 2d · ' + out.particles.count + ' частиц';
+    document.getElementById('m-tt').textContent = 'кадров ' + tt.frames + ' · шаг ' + (360 / tt.frames).toFixed(0) + '° · лист ' + tt.sheetWidth + 'px · кадр ' + tt.frame;
+    document.getElementById('m-vp').textContent = 'viewport: innerW ' + out.viewport.innerW + ' · clientW ' + out.viewport.clientW + ' · scrollW ' + out.viewport.scrollW + ' · overflowX ' + out.viewport.overflowX;
+    document.getElementById('m-probekeys').textContent = 'probe: ' + Object.keys(out).join(', ');
+    document.getElementById('m-reveal').textContent = 'reveal: ' + document.querySelectorAll('.rv.in').length + '/' + document.querySelectorAll('.rv').length + ' | reduce ' + R + ' | fonts ' + document.fonts.status;
+    document.getElementById('f-reduce').textContent = 'reduce: ' + R;
+    if (report.hair) document.getElementById('m-hair').textContent = 'слоёв ' + report.hair.layers + ' · уровней ' + report.hair.levels + ' · сетка ' + report.hair.grid + ' · сегментов ' + report.hair.segments + ' · сборка ' + report.hair.buildMs + ' мс | штрих ' + report.hair.strokeWidthCss + ' (' + report.hair.vectorEffect + ') · вылет ' + report.hair.bleed.leftDelta + 'px';
+    if (report.engrave) document.getElementById('m-engrave').textContent = 'уровней ' + report.engrave.levels + ' · сетка ' + report.engrave.grid + '×' + report.engrave.grid + ' · линий на кадр ' + report.engrave.segments + ' · фаза света ' + report.engrave.phase;
+    if (report.scrub) document.getElementById('m-scrub').textContent = 'кадр ' + report.scrub.frame + ' → ' + report.scrub.h1 + ' | повтор → ' + report.scrub.h2 + ' | кадр +17 → ' + report.scrub.hOther + ' · совпал сам с собой: ' + report.scrub.sameFrameEqual + ' · отличается от соседнего: ' + report.scrub.differsFromOther;
+    if (report.qa) document.getElementById('m-qa').textContent = 'энергия ' + report.qa.energy + ' · медиана движения ' + report.qa.median + ' · застой ' + report.qa.stillSec + ' с · окно ' + report.qa.window + ' · ' + report.qa.driver;
+    return out;
+  }
+  window.__refresh = refresh;
+  refresh();
+  setTimeout(refresh, 1400);
+  setTimeout(refresh, 3000);
+  if (DS_FLAGS.final) setTimeout(function () { report.seeked = DS.seekAll(); refresh(); }, 3200);   // финальный кадр: сик всех анимаций
+  window.requestAnimationFrame(function () { setTimeout(function () { refresh(); window.__ready = true; }, 600); });
+})(window);
+</script>
+</body>
+</html>
