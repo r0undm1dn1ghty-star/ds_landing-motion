@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Живой hero: агент ставит моушн за вечер — Discovery System</title>
+<style>
+  :root{
+    --bg:#111524; --card:#161c30; --card2:#1a2138;
+    --ink:#eef2f9; --muted:#b8c3d6; --faint:#7c8aa0;
+    --accent:#7bc4ff; --accent-dim:rgba(123,196,255,.14);
+    --ok:#7fe0a8; --line:rgba(184,195,214,.14);
+    --ease:cubic-bezier(.22,1,.36,1);
+    --r-lg:14px; --r-md:10px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{background:var(--bg)}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:56px 24px 40px; -webkit-font-smoothing:antialiased;
+  }
+  .hero{width:100%; max-width:1160px; display:grid; grid-template-columns:minmax(300px,430px) 1fr;
+    gap:48px; align-items:center}
+  /* ---------- левая колонка: копирайт ---------- */
+  .copy .kicker{font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin-bottom:16px}
+  .copy h1{font-size:clamp(30px,4.2vw,46px); line-height:1.08; font-weight:700; letter-spacing:-.01em}
+  /* буквы прячутся ТОЛЬКО когда JS активен — без JS заголовок целый */
+  .js .copy h1 .ch{display:inline-block; opacity:0; transform:translateY(32px)}
+  .js .copy h1.settled .ch{opacity:1; transform:none}
+  .copy p.lead{color:var(--muted); font-size:17px; line-height:1.55; margin:20px 0 28px; max-width:38ch}
+  .cta-row{display:flex; gap:12px; flex-wrap:wrap}
+  .btn{font:inherit; cursor:pointer; border:0; border-radius:var(--r-md); padding:13px 24px; font-size:15px; font-weight:600;
+    transition:transform .18s var(--ease), background .18s var(--ease)}
+  .btn:active{transform:scale(.97)}
+  .btn-primary{background:var(--accent); color:#0d1526}
+  .btn-primary:hover{transform:translateY(-1px)}
+  .btn-ghost{background:transparent; color:var(--ink); box-shadow:inset 0 0 0 1px var(--line)}
+  .btn-ghost:hover{background:rgba(184,195,214,.08)}
+  .proof{margin-top:22px; font-size:13.5px; color:var(--faint)}
+  /* ---------- сцена: фейк-окно продукта ---------- */
+  .stage{position:relative; min-height:480px}
+  .win{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--r-lg);
+    box-shadow:0 30px 80px rgba(0,0,0,.5); overflow:hidden; position:relative;
+    width:100%; max-width:560px; margin-left:auto;
+  }
+  .win-bar{display:flex; align-items:center; gap:8px; padding:12px 16px; border-bottom:1px solid var(--line)}
+  .dot{width:10px; height:10px; border-radius:50%; background:#2c3654}
+  .win-bar .title{margin-left:8px; font-size:12.5px; color:var(--faint)}
+  .win-body{padding:16px}
+  .task-row{display:flex; gap:10px; align-items:center; background:var(--card2);
+    border:1px solid var(--line); border-radius:var(--r-md); padding:12px}
+  .task-text{font-size:14px; flex:1; min-height:20px}
+  .task-text .caret{display:inline-block; width:2px; height:16px; background:var(--accent);
+    vertical-align:-3px; margin-left:1px; opacity:0}
+  .typing .caret{opacity:1; animation:blink 1s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+  .assign{font:inherit; font-size:13px; font-weight:600; background:var(--accent-dim); color:var(--accent);
+    border:1px solid rgba(123,196,255,.35); border-radius:8px; padding:8px 14px; cursor:default; white-space:nowrap;
+    transition:transform .15s var(--ease)}
+  .assign.pressed{transform:scale(.93)}
+  .status{font-size:13px; color:var(--faint); margin:12px 4px 0; min-height:20px; opacity:0; transform:translateY(6px);
+    transition:opacity .3s var(--ease), transform .3s var(--ease)}
+  .status.show{opacity:1; transform:none}
+  .status b{color:var(--accent); font-weight:600}
+  .list{list-style:none; margin-top:10px; display:flex; flex-direction:column; gap:8px; min-height:172px}
+  .card{background:var(--card2); border:1px solid var(--line); border-radius:var(--r-md); padding:12px 14px;
+    display:flex; align-items:center; gap:12px; opacity:0; transform:translateY(12px)}
+  .card.in{opacity:1; transform:none; transition:opacity .35s var(--ease), transform .35s var(--ease)}
+  .card.leaving{opacity:0; transform:translateY(8px); transition:opacity .3s var(--ease), transform .3s var(--ease)}
+  /* скелетоны видны всегда как филлер — это не entrance, а placeholder */
+  .card.placeholder{opacity:1; transform:none}
+  .card.placeholder.leaving{opacity:0; transform:translateY(8px); transition:opacity .3s var(--ease), transform .3s var(--ease)}
+  .thumb{width:38px; height:38px; border-radius:8px; background:#22304e;
+    border:1px solid var(--line); flex:none; display:flex; align-items:center; justify-content:center;
+    font-size:16px; color:var(--accent)}
+  .card .meta{flex:1; min-width:0}
+  .card .t{font-size:13.5px; font-weight:600}
+  .card .s{font-size:12px; color:var(--faint); margin-top:2px}
+  .num{font-variant-numeric:tabular-nums; font-size:15px; font-weight:700; color:var(--ink); white-space:nowrap}
+  .num small{font-size:11px; color:var(--faint); font-weight:400}
+  .placeholder{border:1px dashed rgba(184,195,214,.22); border-radius:var(--r-md); background:transparent}
+  .placeholder .bar{height:10px; border-radius:5px; background:rgba(184,195,214,.14)}
+  .payoff{display:flex; align-items:center; gap:10px; margin-top:12px; padding:12px 14px;
+    background:rgba(127,224,168,.08); border:1px solid rgba(127,224,168,.3); border-radius:var(--r-md);
+    font-size:14px; opacity:0; transform:translateY(10px)}
+  .payoff.show{opacity:1; transform:none; transition:opacity .4s var(--ease), transform .4s var(--ease)}
+  .payoff .tick{width:22px; height:22px; border-radius:50%; background:var(--ok); color:#0d1526; flex:none;
+    display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700}
+  .payoff b{font-weight:700}
+  .reset-link{margin:10px 4px 0; font-size:12.5px; color:var(--faint); background:none; border:0; font:inherit;
+    cursor:default; padding:4px 0; text-decoration:underline; text-underline-offset:3px; text-decoration-color:rgba(184,195,214,.35)}
+  .reset-link.armed{color:var(--accent); cursor:pointer}
+  /* курсор */
+  .cursor{position:absolute; top:0; left:0; z-index:5; pointer-events:none;
+    transition:transform .8s var(--ease); will-change:transform; filter:drop-shadow(0 2px 6px rgba(0,0,0,.5))}
+  .cursor svg{display:block}
+  .cursor.click svg{animation:press .3s var(--ease)}
+  @keyframes press{40%{transform:scale(.82)}}
+  /* панель управления */
+  .controls{width:100%; max-width:1160px; margin-top:36px; display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+  .controls .btn{padding:10px 20px; font-size:14px}
+  .scene-state{margin-left:auto; font-size:13px; color:var(--faint); min-height:20px}
+  .note{width:100%; max-width:1160px; margin-top:14px; font-size:12.5px; color:var(--faint)}
+  @media (max-width:900px){
+    .hero{grid-template-columns:1fr; gap:36px}
+    .win{margin:0 auto}
+    .stage{min-height:0}
+    .scene-state{margin-left:0}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation:none !important; transition:none !important}
+    .js .copy h1 .ch{opacity:1; transform:none}
+    .card{opacity:1; transform:none}
+    .payoff{opacity:1; transform:none}
+    .status{opacity:1; transform:none}
+    .cursor{display:none}
+  }
+</style>
+</head>
+<body>
+
+<section class="hero" aria-label="Discovery System — агент ставит моушн за вечер">
+  <div class="copy">
+    <div class="kicker">Discovery System</div>
+    <h1 id="h1">Агент ставит моушн за один вечер</h1>
+    <p class="lead">Опишите задачу своими словами — агент соберёт анимацию лендинга: hero-демо, текстовые эффекты, микро-переходы. Результат прилетает карточкой прямо в окно.</p>
+    <div class="cta-row">
+      <button class="btn btn-primary" type="button" data-demo-goto>Попробовать демо</button>
+      <a class="btn btn-ghost" style="text-decoration:none" href="https://t.me/discoverysystem">Канал: t.me/discoverysystem</a>
+    </div>
+    <div class="proof">Чистый CSS и WAAPI · без сборки · открывается из файла</div>
+  </div>
+
+  <!-- POSTER-КАДР: в HTML уже лежит финал (бит 4): задача, ответ, 2 карточки, пейофф.
+       Без JS и для скриншота это самодостаточная история. JS уберёт его в startState перед лупом. -->
+  <div class="stage" id="stage" data-state="payoff" aria-label="Демо: как агент выполняет задачу">
+    <div class="win" id="win">
+      <div class="win-bar" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="title">discovery — моушн за вечер</span></div>
+      <div class="win-body">
+        <div class="task-row">
+          <div class="task-text" id="taskText"><span id="typed">Собери hero-демо: курсор, карточка, ролл цифр</span><span class="caret" aria-hidden="true"></span></div>
+          <button class="assign" id="assignBtn" type="button" tabindex="-1">Поставить задачу</button>
+        </div>
+        <div class="status show" id="status" role="status"><b>Агент:</b> собрал 3 эффекта, проверил луп</div>
+        <ul class="list" id="list">
+          <li class="card in"><span class="thumb" aria-hidden="true">✦</span><div class="meta"><div class="t">Курсор назначает задачу</div><div class="s">печать · клик · ответ агента</div></div><div class="num">1 <small>бит</small></div></li>
+          <li class="card in result"><span class="thumb" aria-hidden="true">◈</span><div class="meta"><div class="t">hero-демо «Моушн за вечер»</div><div class="s">карточка · ролл цифр · пейофф</div></div><div class="num">3 <small>эффекта</small></div></li>
+        </ul>
+        <div class="payoff show" id="payoff"><span class="tick" aria-hidden="true">✓</span><span>Готово за вечер: <b><span id="payNum">3</span> эффекта</b> · <span id="payTime">0</span> правок понадобилось</span></div>
+        <button class="reset-link armed" id="resetLink" type="button">↺ начать заново</button>
+      </div>
+    </div>
+    <div class="cursor" id="cursor" aria-hidden="true">
+      <svg width="22" height="32" viewBox="0 0 22 32" fill="none">
+        <path d="M3 2 L3 25 L8.5 20 L11.5 27 L14.5 25.8 L11.6 19 L17 19 Z" fill="#eef2f9" stroke="#0d1526" stroke-width="1.5"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<div class="controls">
+  <button class="btn btn-primary" id="playBtn" type="button">Играть</button>
+  <button class="btn btn-ghost" id="pauseBtn" type="button">Пауза</button>
+  <button class="btn btn-ghost" id="resetBtn" type="button">Сброс</button>
+  <span class="scene-state" id="sceneState" role="status">Пейофф: готово за вечер</span>
+</div>
+<p class="note">Сценарий (~14 с): курсор печатает задачу → агент отвечает → карточки прилетают, цифры роллятся → пейофф держится 2&nbsp;с → курсор жмёт «начать заново», список уходит целиком, луп начинается заново.</p>
+
+<script>
+(function(){
+  "use strict";
+  document.documentElement.classList.add("js"); // буквы прячутся только при живом JS
+  var EASE = "cubic-bezier(.22,1,.36,1)";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* --- заголовок: сборка по буквам (per-character-rise, стаггер 24мс) --- */
+  var h1 = document.getElementById("h1");
+  var phrase = h1.textContent;
+  h1.setAttribute("aria-label", phrase);
+  h1.textContent = "";
+  phrase.split(" ").forEach(function(word, wi, arr){
+    word.split("").forEach(function(chr){
+      var s = document.createElement("span");
+      s.className = "ch"; s.setAttribute("aria-hidden","true"); s.textContent = chr;
+      h1.appendChild(s);
+    });
+    if (wi < arr.length - 1) h1.appendChild(document.createTextNode(" "));
+  });
+  function revealHeadline(){
+    var chars = h1.querySelectorAll(".ch");
+    if (reduce){ h1.classList.add("settled"); return; }
+    /* буквы прячем только в момент, когда анимация реально стартует:
+       если WAAPI недоступен — класс .js не ставим и заголовок остаётся целым */
+    document.documentElement.classList.add("js");
+    try {
+      chars.forEach(function(c, i){
+        c.animate(
+          [{opacity:0, transform:"translateY(32px)"},{opacity:1, transform:"translateY(0)"}],
+          {duration:700, delay:i*24, easing:EASE, fill:"forwards"}
+        );
+      });
+    } catch(e){
+      document.documentElement.classList.remove("js");
+      h1.classList.add("settled");
+      return;
+    }
+    setTimeout(function(){ h1.classList.add("settled"); }, 700 + chars.length*24 + 50);
+  }
+
+  /* --- элементы сцены --- */
+  var stage = document.getElementById("stage"),
+      win = document.getElementById("win"),
+      cursor = document.getElementById("cursor"),
+      row = document.querySelector(".task-row"),
+      typed = document.getElementById("typed"),
+      assignBtn = document.getElementById("assignBtn"),
+      status = document.getElementById("status"),
+      list = document.getElementById("list"),
+      payoff = document.getElementById("payoff"),
+      payNum = document.getElementById("payNum"),
+      payTime = document.getElementById("payTime"),
+      resetLink = document.getElementById("resetLink"),
+      sceneState = document.getElementById("sceneState"),
+      playBtn = document.getElementById("playBtn"),
+      pauseBtn = document.getElementById("pauseBtn"),
+      resetBtn = document.getElementById("resetBtn");
+
+  var TASK = "Собери hero-демо: курсор, карточка, ролл цифр";
+  var gen = 0;            // поколение запуска — отменяет устаревшие таймеры
+  var paused = false;
+  var pauseGate = null;   // resolve-функция паузы
+
+  function say(t){ sceneState.textContent = t; }
+  function wait(ms, g){
+    return new Promise(function(res){
+      if (g !== gen) return res(false);
+      var t0 = performance.now(), left = ms;
+      (function tick(){
+        if (g !== gen) return res(false);
+        if (paused){ pauseGate = function(){ pauseGate = null; tick(); }; return; }
+        var dt = performance.now() - t0; t0 = performance.now();
+        if (!paused) left -= dt;
+        if (left <= 0) return res(true);
+        requestAnimationFrame(tick);
+      })();
+    });
+  }
+  function moveCursorTo(el, g){
+    if (g !== gen || reduce) return;
+    var s = stage.getBoundingClientRect(), r = el.getBoundingClientRect();
+    var x = r.left - s.left + r.width * 0.55,
+        y = r.top - s.top + r.height * 0.35;
+    cursor.style.transform = "translate(" + x + "px," + y + "px)";
+  }
+  function clickFx(){ cursor.classList.remove("click"); void cursor.offsetWidth; cursor.classList.add("click"); }
+  function parkCursor(g){
+    if (g !== gen || reduce) return;
+    var s = stage.getBoundingClientRect(), r = row.getBoundingClientRect();
+    cursor.style.transform = "translate(" + (r.right - s.left + 18) + "px," + (r.top - s.top - 6) + "px)";
+  }
+  function typeTask(g){
+    return new Promise(function(res){
+      if (g !== gen) return res(false);
+      row.classList.add("typing");
+      var i = 0;
+      (function step(){
+        if (g !== gen) return res(false);
+        if (paused){ pauseGate = function(){ pauseGate = null; step(); }; return; }
+        if (i <= TASK.length){ typed.textContent = TASK.slice(0, i++); setTimeout(step, 34); }
+        else { row.classList.remove("typing"); res(true); }
+      })();
+    });
+  }
+  function rollNumber(el, to, ms, g){
+    return new Promise(function(res){
+      if (g !== gen) return res(false);
+      var t0 = performance.now();
+      (function frame(){
+        if (g !== gen) return res(false);
+        if (paused){ pauseGate = function(){ pauseGate = null; requestAnimationFrame(frame); }; return; }
+        var p = Math.min(1, (performance.now() - t0) / ms);
+        el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3)));
+        if (p < 1) requestAnimationFrame(frame); else res(true);
+      })();
+    });
+  }
+  function addCard(o){
+    var li = document.createElement("li");
+    li.className = "card";
+    li.innerHTML = '<span class="thumb" aria-hidden="true">' + o.icon + "</span>" +
+      '<div class="meta"><div class="t">' + o.t + '</div><div class="s">' + o.s + "</div></div>" +
+      '<div class="num">' + o.n + "</div>";
+    // место вписано до первого кадра: вставляем сразу, вход — движением
+    var ph = document.getElementById("ph1");
+    if (ph) list.insertBefore(li, ph); else list.appendChild(li);
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ li.classList.add("in"); }); });
+    return li;
+  }
+
+  /* --- состояния --- */
+  /* скелетоны-филлеры: держат место в окне, пока карточек нет.
+     В статичном poster-кадре их нет — создаёт только JS. */
+  function ensurePlaceholders(){
+    [["ph1", 64], ["ph2", 46]].forEach(function(spec){
+      if (document.getElementById(spec[0])) return;
+      var li = document.createElement("li");
+      li.className = "card placeholder";
+      li.id = spec[0];
+      li.setAttribute("aria-hidden", "true");
+      li.innerHTML = '<span class="thumb" style="background:transparent;border-style:dashed"></span>' +
+        '<div class="meta"><div class="bar" style="width:' + spec[1] + '%"></div>' +
+        '<div class="bar" style="width:' + Math.round(spec[1] * 0.55) + '%;margin-top:8px"></div></div>';
+      list.appendChild(li);
+    });
+  }
+  function startState(g){
+    ensurePlaceholders();
+    typed.textContent = "";
+    status.classList.remove("show"); status.innerHTML = "";
+    payoff.classList.remove("show");
+    payNum.textContent = "0"; payTime.textContent = "0";
+    resetLink.classList.remove("armed");
+    Array.prototype.slice.call(list.querySelectorAll(".card:not(.placeholder)")).forEach(function(c){ c.remove(); });
+    ["ph1","ph2"].forEach(function(id){
+      var p = document.getElementById(id);
+      if (!p) return;
+      p.classList.remove("leaving"); p.style.opacity = ""; p.style.transform = "";
+    });
+    parkCursor(g);
+  }
+  function finalState(){
+    typed.textContent = TASK;
+    status.innerHTML = "<b>Агент:</b> собрал 3 эффекта, проверил луп";
+    status.classList.add("show");
+    if (!list.querySelector(".result")){
+      var r = addCard({icon:"◈", t:"hero-демо «Моушн за вечер»", s:"курсор · карточка · ролл цифр", n:"3 <small>эффекта</small>"});
+      r.classList.add("result"); r.classList.add("in");
+    }
+    payNum.textContent = "3"; payTime.textContent = "0";
+    payoff.classList.add("show");
+    resetLink.classList.add("armed");
+  }
+
+  /* --- сценарий: 4 бита, ~14 с --- */
+  async function run(g){
+    startState(g);
+    // БИТ 1 — курсор назначает задачу (печать + клик), ~3.5 с
+    say("Бит 1 — задача уходит агенту");
+    moveCursorTo(row, g);
+    if (!await typeTask(g)) return;
+    moveCursorTo(assignBtn, g);
+    if (!await wait(850, g)) return;
+    if (g !== gen) return;
+    clickFx(); assignBtn.classList.add("pressed");
+    setTimeout(function(){ assignBtn.classList.remove("pressed"); }, 220);
+    if (!await wait(500, g)) return;
+    // БИТ 2 — агент отвечает, ~2.5 с
+    say("Бит 2 — агент отвечает");
+    if (g !== gen) return;
+    status.innerHTML = "<b>Агент:</b> берусь — соберу 3 эффекта за вечер";
+    status.classList.add("show");
+    parkCursor(g);
+    if (!await wait(2100, g)) return;
+    // БИТ 3 — результат прилетает карточкой, цифры роллятся, ~4 с
+    say("Бит 3 — результат прилетает карточкой");
+    if (g !== gen) return;
+    addCard({icon:"✦", t:"Курсор назначает задачу", s:"печать · клик · ответ агента", n:"1 <small>бит</small>"}).classList.add("in");
+    if (!await wait(900, g)) return;
+    if (g !== gen) return;
+    var r2 = addCard({icon:"◈", t:"hero-демо «Моушн за вечер»", s:"карточка · ролл цифр · пейофф", n:"3 <small>эффекта</small>"});
+    r2.classList.add("result");
+    var ph1el = document.getElementById("ph1");
+    if (ph1el) ph1el.classList.add("leaving");
+    rollNumber(payNum, 3, 1200, g);
+    if (!await wait(1500, g)) return;
+    // БИТ 4 — пейофф держится ~2 с
+    say("Бит 4 — пейофф: готово за вечер");
+    if (g !== gen) return;
+    payoff.classList.add("show");
+    rollNumber(payTime, 0, 400, g);
+    if (!await wait(2200, g)) return;
+    // СБРОС с видимой причиной: курсор жмёт «начать заново», список уходит целиком
+    say("Сброс — начинаем заново");
+    if (g !== gen) return;
+    resetLink.classList.add("armed");
+    moveCursorTo(resetLink, g);
+    if (!await wait(900, g)) return;
+    if (g !== gen) return;
+    clickFx();
+    var items = Array.prototype.slice.call(list.children);
+    items.forEach(function(c){ c.classList.add("leaving"); c.classList.remove("in"); });
+    status.classList.remove("show"); payoff.classList.remove("show");
+    if (!await wait(700, g)) return;
+    if (g !== gen || paused) { if (g === gen && paused){ pauseGate = function(){ pauseGate = null; run(g); }; } return; }
+    run(g); // луп: следующий заход начинается в пределах секунды
+  }
+
+  /* --- управление --- */
+  playBtn.addEventListener("click", function(){
+    if (reduce){ finalState(); say("Финальное состояние (reduced motion)"); return; }
+    if (paused){ paused = false; playBtn.textContent = "Играть"; var f = pauseGate; pauseGate = null; if (f) f(); say("Продолжаем"); }
+    else { gen++; paused = false; run(gen); }
+  });
+  pauseBtn.addEventListener("click", function(){
+    if (reduce) return;
+    paused = true; playBtn.textContent = "Продолжить"; say("Пауза");
+  });
+  function doReset(){
+    gen++; paused = false; playBtn.textContent = "Играть";
+    if (reduce){ finalState(); say("Финальное состояние (reduced motion)"); }
+    else { startState(gen); say("Сброшено — нажмите «Играть»"); }
+  }
+  resetBtn.addEventListener("click", doReset);
+  Array.prototype.forEach.call(document.querySelectorAll("[data-demo-goto]"), function(b){
+    b.addEventListener("click", function(){
+      document.getElementById("stage").scrollIntoView({behavior: reduce ? "auto" : "smooth", block:"center"});
+      if (!reduce){ gen++; paused = false; run(gen); }
+    });
+  });
+
+  /* --- старт --- */
+  revealHeadline();
+  if (reduce){ finalState(); say("Финальное состояние (reduced motion)"); }
+  else {
+    startState(gen);
+    // автоплей только когда сцена видна
+    var started = false;
+    function autoload(){
+      if (started) return; started = true;
+      setTimeout(function(){ if (gen === 0 && !paused) run(gen); }, 900);
+    }
+    if ("IntersectionObserver" in window){
+      var io = new IntersectionObserver(function(es){
+        es.forEach(function(e){ if (e.isIntersecting){ autoload(); io.disconnect(); } });
+      }, {threshold:.25});
+      io.observe(stage);
+    } else autoload();
+  }
+})();
+</script>
+</body>
+</html>

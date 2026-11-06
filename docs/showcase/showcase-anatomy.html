@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Анатомия установки агента за 20–40 минут — Discovery System</title>
+<style>
+  :root{
+    --bg:#111524; --card:#161c30; --card2:#1a2138;
+    --ink:#eef2f9; --muted:#b8c3d6; --faint:#7c8aa0;
+    --accent:#7bc4ff; --accent-dim:rgba(123,196,255,.14);
+    --ok:#7fe0a8; --line:rgba(184,195,214,.14);
+    --ease:cubic-bezier(.22,1,.36,1);
+    --r-lg:14px; --r-md:10px;
+    /* изометрия: обратные углы для биоард-подписей */
+    --ax:54deg; --az:45deg;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{background:var(--bg);scroll-behavior:smooth}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    -webkit-font-smoothing:antialiased; line-height:1.5;
+  }
+  .page{max-width:1180px;margin:0 auto;padding:56px 24px 0}
+
+  /* ---------- шапка ---------- */
+  .kicker{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+  h1{font-size:clamp(28px,4vw,44px);line-height:1.1;font-weight:700;letter-spacing:-.01em;max-width:20ch}
+  .lead{color:var(--muted);font-size:17px;line-height:1.55;margin:18px 0 0;max-width:62ch}
+  .lead b{color:var(--ink)}
+
+  /* ---------- пульт ---------- */
+  .panel{margin-top:26px;background:var(--card);border:1px solid var(--line);
+    border-radius:var(--r-lg);padding:16px 18px;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+  .btn{font:inherit;cursor:pointer;border:1px solid var(--line);border-radius:var(--r-md);
+    padding:10px 20px;font-size:14px;font-weight:600;background:transparent;color:var(--ink);
+    transition:transform .18s var(--ease),background .18s var(--ease),border-color .18s var(--ease)}
+  .btn:hover{background:rgba(184,195,214,.08)}
+  .btn:active{transform:scale(.97)}
+  .btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#0d1526}
+  .btn[aria-pressed="true"]:hover{background:var(--accent)}
+  .scrub{display:flex;align-items:center;gap:10px;flex:1 1 220px;min-width:200px;color:var(--faint);font-size:13px}
+  .scrub input[type="range"]{flex:1;accent-color:var(--accent)}
+  .readout{margin-left:auto;font-size:13px;color:var(--faint);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .readout b{color:var(--accent);font-weight:600}
+
+  /* ---------- скролл-зона ---------- */
+  .scroll-wrap{position:relative;height:260vh}
+  .sticky{position:sticky;top:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
+    padding:24px 0;overflow:hidden}
+  .fig-card{width:100%;background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);
+    box-shadow:0 30px 80px rgba(0,0,0,.5);overflow:hidden}
+  .fig-head{display:flex;justify-content:space-between;gap:12px;padding:14px 20px;border-bottom:1px solid var(--line);
+    font-size:12.5px;color:var(--faint)}
+  .fig-head .live{color:var(--accent)}
+
+  /* ---------- изометрическая сцена ---------- */
+  .iso-viewport{perspective:1500px;overflow-x:auto;overflow-y:hidden;
+    background:
+      radial-gradient(ellipse 60% 22% at 50% 78%, rgba(0,0,0,.5), rgba(0,0,0,0) 70%);
+  }
+  .iso-inner{width:1240px;height:640px;margin:0 auto;position:relative}
+  /* сдвиг вниз на 58px: габарит фигуры (бирки + платформа) 645px в кадре 655px,
+     без сдвига верхняя бирка «Агент» срезалась overflow-y:hidden на 52px */
+  .world{position:absolute;left:50%;top:calc(50% + 58px);width:0;height:0;
+    transform-style:preserve-3d;transform:rotateX(var(--ax)) rotateZ(var(--az))}
+  /* грани куба */
+  .f{position:absolute;left:0;top:0;border:1px solid rgba(238,242,249,.13);
+    transform-style:preserve-3d}
+  .t-top{background:#232c49}
+  .t-s{background:#1b2338}
+  .t-e{background:#141b2e}
+  .t-n{background:#0e1428}
+  .t-w{background:#0e1428}
+  .f-cap{background:#2b3657}
+  .f-rail{background:#1c2438}
+  .f-rod{background:#31405f}
+  .f-pack{background:var(--accent);border-color:var(--accent)}
+  /* заклёпки на верхней грани */
+  .rivet{position:absolute;width:5px;height:5px;border-radius:50%;background:#0d1322;
+    box-shadow:inset 0 0 0 1px rgba(238,242,249,.22)}
+  /* номер на крышке */
+  .plate-num{position:absolute;left:50%;top:50%;width:34px;height:34px;margin:-17px 0 0 -17px;
+    border-radius:50%;background:var(--card2);border:1px solid rgba(123,196,255,.5);
+    color:var(--accent);font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  /* бирка-билборд: компенсируем наклон мира, всегда лицом к зрителю.
+     Чётные станции — бирка выше корпуса, нечётные — под плитой. */
+  .tag{position:absolute;left:0;top:0;width:188px;margin-left:-94px;padding:10px 12px 11px;
+    background:rgba(22,28,48,.94);border:1px solid var(--line);border-radius:var(--r-md);
+    text-align:center;transform-style:preserve-3d;max-height:120px;overflow:hidden}
+  .tag .n{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;
+    padding:0 7px;border-radius:12px;background:var(--accent-dim);
+    border:1px solid rgba(123,196,255,.4);color:var(--accent);
+    font-size:12px;font-weight:700;margin-bottom:6px}
+  .tag .t{font-size:13.5px;font-weight:700;line-height:1.3}
+  .tag .t .g{color:var(--accent);font-weight:400;margin-right:6px}
+  .tag .b{font-size:12px;color:var(--muted);line-height:1.45;margin-top:4px}
+  .st{position:absolute;left:0;top:0;transform-style:preserve-3d;will-change:transform;
+    transition:transform 620ms cubic-bezier(.16,1,.3,1)}
+  .world.is-scroll .st{transition:none}   /* скролл/скраб ведут k покадрово — переход мешает */
+  .rod{transition:opacity 400ms var(--ease)}
+  .is-asm .rod{opacity:0 !important}
+  .tag.tag-client{border-color:rgba(127,224,168,.45)}
+  .tag.tag-client .n{background:rgba(127,224,168,.12);border-color:rgba(127,224,168,.45);color:var(--ok)}
+
+  .fig-foot{display:flex;justify-content:space-between;gap:12px;padding:12px 20px;
+    border-top:1px solid var(--line);font-size:12.5px;color:var(--faint);flex-wrap:wrap}
+  .hint-scroll{color:var(--accent)}
+
+  /* ---------- легенда: 7 строк ---------- */
+  .legend{margin:34px 0 0;background:var(--card);border:1px solid var(--line);
+    border-radius:var(--r-lg);padding:22px 22px 8px}
+  .legend h2{font-size:19px;margin-bottom:6px}
+  .legend p.sub{color:var(--muted);font-size:14px;margin-bottom:14px}
+  .legend ol{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:10px;padding-bottom:20px}
+  .legend li{background:var(--card2);border:1px solid var(--line);border-radius:var(--r-md);
+    padding:12px 14px;font-size:13.5px;color:var(--muted)}
+  .legend li b{display:block;color:var(--ink);font-size:14px;margin-bottom:2px}
+  .legend li b .n{color:var(--accent);margin-right:8px}
+  .legend li:last-child b .n{color:var(--ok)}
+
+  .outro{color:var(--faint);font-size:13.5px;margin:26px 0 60px}
+  .outro a{color:var(--accent)}
+
+  @media (max-width:760px){
+    .readout{margin-left:0}
+    .iso-inner{height:520px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *{transition:none !important;animation:none !important}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="kicker">Витрина 1 · anatomy-фигура</div>
+  <h1>Анатомия установки агента за 20–40 минут</h1>
+  <p class="lead">Семь узлов одной цепочки: от облачного сервера до довольного клиента.
+    <b>Разберите фигуру</b> кнопкой или скроллом — каждый узел поднимается на своей направляющей,
+    а подпись говорит, какую пользу он несёт. В сборке это одно тело: агент, готовый отвечать клиентам.</p>
+
+  <div class="panel" role="group" aria-label="Управление разлётом">
+    <button class="btn" id="btnBoom" aria-pressed="true">Разобрать</button>
+    <button class="btn" id="btnAsm" aria-pressed="false">Собрать</button>
+    <button class="btn" id="btnAuto" aria-pressed="true" title="Разлёт следует за скроллом">Авто по скроллу</button>
+    <label class="scrub">разлёт
+      <input type="range" id="scrub" min="0" max="100" value="100" aria-label="Степень разлёта фигуры">
+    </label>
+    <div class="readout" id="readout" aria-live="polite">разлёт <b>100%</b> · 7 узлов · 20–40 минут</div>
+  </div>
+
+  <div class="scroll-wrap" id="scrollWrap">
+    <div class="sticky">
+      <div class="fig-card">
+        <div class="fig-head">
+          <span>Fig 1 · установка агента · изометрия, CSS preserve-3d</span>
+          <span class="live" id="figState">разлёт</span>
+        </div>
+        <div class="iso-viewport">
+          <div class="iso-inner" id="isoInner">
+            <div class="world" id="world"></div>
+          </div>
+        </div>
+        <div class="fig-foot">
+          <span>7 станций на одной платформе · линии-связи — направляющие и шина</span>
+          <span class="hint-scroll" id="scrollHint">листайте вниз — фигура собирается · вверх — разбирается</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <noscript>
+    <div class="legend"><h2>Семь станций цепочки</h2>
+      <ol>
+        <li><b>Облачный сервер</b>Принимает обращения даже ночью, без вашего участия</li>
+        <li><b>Агент</b>Понимает вопрос и ведёт диалог к заявке</li>
+        <li><b>ТГ-бот</b>Отвечает за секунды прямо в Telegram</li>
+        <li><b>База знаний</b>Знает услуги и цены лучше нового менеджера</li>
+        <li><b>Настройки</b>Тон и границы задаёте вы, агент не выдумывает</li>
+        <li><b>Тест</b>Гоняем на живых вопросах до запуска</li>
+        <li><b>Довольный клиент</b>Заявка у вас, клиент уже ждёт ответа</li>
+      </ol>
+    </div>
+  </noscript>
+
+  <div class="legend" id="legend">
+    <h2>Что показывает каждая станция</h2>
+    <p class="sub">Номера на крышках совпадают с бирками на фигуре. Порядок — слева направо по ходу заявки.</p>
+    <ol id="legendList"></ol>
+  </div>
+
+  <p class="outro">Собрано вручную на чистом CSS (preserve-3d), SVG и WAAPI — без сборки и тяжёлых библиотек.
+    Вопросы по установке — <a href="https://t.me/discoverysystem">t.me/discoverysystem</a>.</p>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- данные: 7 станций ---------- */
+  var ST = [
+    {t:"Облачный сервер", g:"\u25A4", b:"Принимает обращения даже ночью, без вашего участия", h:56},
+    {t:"Агент",            g:"\u2726", b:"Понимает вопрос и ведёт диалог к заявке",              h:92},
+    {t:"ТГ-бот",           g:"\u2708", b:"Отвечает за секунды прямо в Telegram",                  h:64},
+    {t:"База знаний",      g:"\u25A6", b:"Знает услуги и цены лучше нового менеджера",            h:100},
+    {t:"Настройки",        g:"\u2699", b:"Тон и границы задаёте вы, агент не выдумывает",         h:46},
+    {t:"Тест",             g:"\u2713", b:"Гоняем на живых вопросах до запуска",                   h:60},
+    {t:"Довольный клиент", g:"\u2665", b:"Заявка у вас, клиент уже ждёт ответа",                  h:76}
+  ];
+  var STEP = 170, X0 = -510, PL = 140, CTR = PL / 2;
+  var LIFT = 26;                 // шаг подъёма при разлёте: компактно, сцена влезает в карточку
+  var pos = ST.map(function(s, i){
+    return { x: X0 + i * STEP, y: (i % 2 ? -58 : 58), lift: 30 + i * LIFT, h: s.h };
+  });
+
+  var world = document.getElementById("world");
+
+  function el(tag, cls, html){
+    var d = document.createElement(tag || "div");
+    if (cls) d.className = cls;
+    if (html != null) d.innerHTML = html;
+    return d;
+  }
+
+  /* коробка x,y — угол, w,d — стороны, z0 — низ, h — высота */
+  function box(x, y, w, d, z0, h, tones){
+    var g = el("div");
+    g.style.transformStyle = "preserve-3d";
+    var top = el("div", "f " + tones[0]);
+    top.style.cssText += ";width:"+w+"px;height:"+d+"px;transform:translateX("+x+"px) translateY("+y+"px) translateZ("+(z0+h)+"px)";
+    var s = el("div", "f " + tones[1]);
+    s.style.cssText += ";width:"+w+"px;height:"+h+"px;transform:translateX("+x+"px) translateY("+(y+d)+"px) translateZ("+(z0+h)+"px) rotateX(-90deg)";
+    var e = el("div", "f " + tones[2]);
+    e.style.cssText += ";width:"+h+"px;height:"+d+"px;transform:translateX("+(x+w)+"px) translateY("+y+"px) translateZ("+(z0+h)+"px) rotateY(90deg)";
+    var n = el("div", "f " + tones[3]);
+    n.style.cssText += ";width:"+w+"px;height:"+h+"px;transform:translateX("+x+"px) translateY("+y+"px) translateZ("+z0+"px) rotateX(90deg)";
+    var wst = el("div", "f " + (tones[4] || tones[3]));
+    wst.style.cssText += ";width:"+h+"px;height:"+d+"px;transform:translateX("+x+"px) translateY("+y+"px) translateZ("+z0+"px) rotateY(-90deg)";
+    /* проверка граней: north: rotateX(90): (x,y)->(x,0,y): z in [z0,z0+h] при translateZ(z0) — ок */
+    g.appendChild(n); g.appendChild(wst); g.appendChild(s); g.appendChild(e); g.appendChild(top);
+    return {g:g, top:top};
+  }
+
+  var stations = [];   // {root, x, y, lift}
+  var rods = [];       // направляющие
+  var i, p;
+
+  /* --- шина-связь между соседними станциями: отрезок по X, затем по Y --- */
+  var railPts = pos.map(function(pt){ return {x: pt.x + CTR, y: pt.y + CTR}; });
+  for (i = 0; i < railPts.length - 1; i++){
+    (function(a, b){
+      var g = el("div"); g.style.transformStyle = "preserve-3d";
+      /* отрезок по X на уровне ya, затем по Y к yb */
+      var segX = box(Math.min(a.x, b.x), a.y - 7, Math.abs(b.x - a.x), 14, 0, 6,
+        ["f-rail","f-rail","f-rail","f-rail"]);
+      var segY = box(b.x - 7, Math.min(a.y, b.y), 14, Math.abs(b.y - a.y) || 14, 0, 6,
+        ["f-rail","f-rail","f-rail","f-rail"]);
+      g.appendChild(segX.g); g.appendChild(segY.g);
+      world.appendChild(g);
+    })(railPts[i], railPts[i + 1]);
+  }
+
+  /* --- станции --- */
+  var legendList = document.getElementById("legendList");
+  for (i = 0; i < ST.length; i++){
+    p = pos[i];
+    (function(s, pt, idx){
+      var root = el("div", "st");
+      /* плита-основание */
+      var pl = box(0, 0, PL, PL, 0, 10, ["t-s","t-e","t-n","t-n"]);
+      /* корпус */
+      var body = box(15, 15, PL - 30, PL - 30, 10, pt.h, ["t-top","t-s","t-e","t-n"]);
+      /* крышка */
+      var cap = box(30, 30, PL - 60, PL - 60, 10 + pt.h, 12, ["f-cap","t-s","t-e","t-n"]);
+  /* Заклёпки лежат внутри верхней грани (плоскость плиты), поэтому прижимаем
+     их к грани: translateZ(0.6px) поверх фона грани. */
+      [[12,12],[PL-17,12],[12,PL-17],[PL-17,PL-17]].forEach(function(c){
+        var r = el("div", "rivet");
+        r.style.cssText += ";left:"+c[0]+"px;top:"+c[1]+"px;transform:translateZ(0.6px)";
+        pl.top.appendChild(r);
+      });
+      /* номер на крышке */
+      var num = el("div", "plate-num", String(idx + 1));
+      num.style.cssText += ";transform:translateZ(0.6px)";
+      cap.top.appendChild(num);
+
+      root.appendChild(pl.g); root.appendChild(body.g); root.appendChild(cap.g);
+
+      /* бирка-билборд: компенсируем наклон мира, всегда лицом к зрителю.
+         Все 7 бирок — над своей станцией: якорь = верх крышки + зазор.
+         Шахматка по высоте (чётные +24, нечётные +110): соседние бирки
+         разнесены по вертикали и не перекрывают друг друга при шаге 170.
+         Тег внутри .st не наследует его transform (плоский div вне
+         preserve-3d), якорь от крышки держит бирку у своей станции. */
+      var baseZ = 10 + pt.h + 12;   /* верх крышки */
+      var tagLift = baseZ + ((idx % 2 === 0) ? 26 : 118);
+      var tag = el("div", "tag" + (idx === ST.length - 1 ? " tag-client" : ""));
+      tag.innerHTML = '<span class="n">' + (idx + 1) + '</span>' +
+        '<div class="t"><span class="g">' + s.g + '</span>' + s.t + '</div>' +
+        '<div class="b">' + s.b + '</div>';
+      /* билборд: отмена наклона мира; позиция — центр станции, высота — якорь выше крышки */
+      tag.style.transform =
+        "translateX(" + CTR + "px) translateY(" + CTR + "px) translateZ(" + tagLift + "px)" +
+        " rotateZ(-45deg) rotateX(-54deg)";
+      root.appendChild(tag);
+
+      world.appendChild(root);
+      stations.push({root: root, x: pt.x, y: pt.y, lift: pt.lift});
+
+      /* направляющая-стойка от земли до плиты в разлёте */
+      var rod = box(pt.x + 14, pt.y + 14, 10, 10, 0, pt.lift, ["f-rod","f-rod","f-rod","f-rod"]);
+      rod.g.className = "rod";
+      rod.g.style.cssText += ";position:absolute;left:0;top:0;opacity:0";
+      rod.g.style.transition = "opacity 400ms cubic-bezier(.22,1,.36,1)";
+      world.appendChild(rod.g);
+      rods.push(rod.g);
+
+      /* строка легенды */
+      var li = document.createElement("li");
+      li.innerHTML = "<b><span class=\"n\">" + (idx + 1) + "</span>" + s.t + "</b>" + s.b;
+      legendList.appendChild(li);
+    })(ST[i], pos[i], i);
+  }
+
+  /* --- пакет-заявка, бегущий по шине --- */
+  var pack = box(0, 0, 18, 18, 8, 14, ["f-pack","f-pack","f-pack","f-pack"]);
+  var packEl = pack.g;
+  packEl.style.position = "absolute"; packEl.style.left = "0"; packEl.style.top = "0";
+  world.appendChild(packEl);
+  var path = [];
+  for (i = 0; i < railPts.length - 1; i++){
+    path.push([railPts[i], {x: railPts[i+1].x, y: railPts[i].y}]);
+    path.push([{x: railPts[i+1].x, y: railPts[i].y}, railPts[i+1]]);
+  }
+  var segLen = path.map(function(sg){
+    return Math.hypot(sg[1].x - sg[0].x, sg[1].y - sg[0].y);
+  });
+  var totalLen = segLen.reduce(function(a, b){ return a + b; }, 0);
+
+  /* ---------- состояние разлёта k: 0 = сборка, 1 = разлёт ----------
+     Позы задаются классом на world (канон object-motion): замер, откат и
+     reduced-motion получаются бесплатно. JS только переключает класс. */
+  var k = reduce ? 0 : 1, auto = !reduce, scrubbing = false;
+  var btnBoom = document.getElementById("btnBoom");
+  var btnAsm = document.getElementById("btnAsm");
+  var btnAuto = document.getElementById("btnAuto");
+  var scrub = document.getElementById("scrub");
+  var readout = document.getElementById("readout");
+  var figState = document.getElementById("figState");
+  var wrap = document.getElementById("scrollWrap");
+
+  function applyK(){
+    var n;
+    for (n = 0; n < stations.length; n++){
+      var st = stations[n];
+      st.root.style.transform =
+        "translate3d(" + st.x + "px," + st.y + "px," + Math.round(st.lift * k) + "px)";
+    }
+    for (n = 0; n < rods.length; n++){
+      rods[n].style.opacity = k < 0.02 ? "0" : String(Math.min(1, k * 1.4));
+    }
+    var pct = Math.round(k * 100);
+    readout.innerHTML = "разлёт <b>" + pct + "%</b> · 7 узлов · 20–40 минут";
+    figState.textContent = pct >= 98 ? "разлёт" : (pct <= 2 ? "сборка" : "разлёт " + pct + "%");
+    if (!scrubbing && document.activeElement !== scrub) scrub.value = String(pct);
+    /* класс-поза для CSS-перехода и замера без rAF (канон object-motion) */
+    world.classList.toggle("is-boom", k > 0.5);
+    world.classList.toggle("is-asm", k <= 0.5);
+  }
+
+  /* Доводка: CSS transition на .st (transform — единственное свойство).
+     rAF — только прогресс-бар доводки; если rAF заморожен (headless),
+     поза встаёт мгновенно через transitionend-фолбэк setTarget. */
+  function setTarget(v){
+    k = v;
+    applyK();
+    setPressed();
+  }
+
+  function setPressed(){
+    btnBoom.setAttribute("aria-pressed", (!auto && k === 1) ? "true" : "false");
+    btnAsm.setAttribute("aria-pressed", (!auto && k === 0) ? "true" : "false");
+    btnAuto.setAttribute("aria-pressed", auto ? "true" : "false");
+  }
+
+  btnBoom.addEventListener("click", function(){ auto = false; setTarget(1); });
+  btnAsm.addEventListener("click", function(){ auto = false; setTarget(0); });
+  btnAuto.addEventListener("click", function(){
+    auto = reduce ? false : !auto;
+    if (reduce){ setTarget(0); } else { scrollDrive(); setPressed(); }
+  });
+  scrub.addEventListener("input", function(){
+    auto = false; scrubbing = true;
+    world.classList.add("is-scroll");   /* точная поза без перехода */
+    setTarget(scrub.value / 100); setPressed();
+  });
+  scrub.addEventListener("change", function(){
+    scrubbing = false; world.classList.remove("is-scroll");
+  });
+
+  /* ---------- скролл: непрерывный скраб, а не дискретная поза ----------
+     k следует за прогрессом зоны: верх зоны = разлёт 1, низ зоны = сборка 0.
+     Детерминирован: поза = чистая функция скролла (канон deterministic-motion).
+     Во время скролл-скраба класс is-scroll снимает CSS-transition со станций,
+     чтобы поза вставала точно (иначе переход врёт под headless и лагает). */
+  function scrollDrive(fromScrub){
+    if ((!auto && !fromScrub) || reduce) return;
+    var r = wrap.getBoundingClientRect();
+    var vh = window.innerHeight || 800;
+    /* прогресс зоны сквозь вьюпорт: 0 = зона только вошла снизу, 1 = зона ушла вверх */
+    var total = r.height - vh;
+    var p = total > 0 ? (0 - r.top) / total : 0;
+    p = Math.max(0, Math.min(1, p));
+    var want = 1 - p;   /* верх зоны = разлёт, низ = сборка */
+    if (!fromScrub) world.classList.add("is-scroll");
+    setTarget(want);
+    if (!fromScrub){
+      clearTimeout(scrollDrive._t);
+      scrollDrive._t = setTimeout(function(){ world.classList.remove("is-scroll"); }, 120);
+    }
+  }
+  window.addEventListener("scroll", function(){ scrollDrive(false); }, {passive:true});
+  window.addEventListener("resize", function(){ scrollDrive(false); });
+
+  /* ---------- пакет-заявка: плавный полёт по шине (только transform) ----------
+     Детерминирован: позиция = чистая функция времени (канон deterministic-motion):
+     никаких p += v*dt, никакого Math.random. В reduce — стоит в начале шины. */
+  var packT0 = 0, packOn = false, packVisible = !reduce;
+  packEl.style.display = packVisible ? "" : "none";
+  var PACK_MS = 9000;   /* полный круг по шине */
+
+  function packPos(t){   /* t в секундах → {x,y} на шине */
+    var want = ((t % (PACK_MS / 1000)) / (PACK_MS / 1000)) * totalLen;
+    var acc = 0, si = 0;
+    while (si < path.length - 1 && acc + segLen[si] < want){ acc += segLen[si]; si++; }
+    var a = path[si][0], b = path[si][1];
+    var f = segLen[si] ? (want - acc) / segLen[si] : 0;
+    return {x: a.x + (b.x - a.x) * f - 9, y: a.y + (b.y - a.y) * f - 9};
+  }
+  if (packVisible){
+    var WAAPI = packEl.animate || null;
+    if (WAAPI){
+      /* WAAPI по ключевым точкам шины: движение на композиторе, без JS-кадров */
+      var keys = [];
+      var NKEY = 24, kk;
+      for (kk = 0; kk <= NKEY; kk++){
+        var pp = packPos(kk / NKEY * (PACK_MS / 1000));
+        keys.push({transform: "translate3d(" + pp.x + "px," + pp.y + "px,0px)"});
+      }
+      packEl.animate(keys, {duration: PACK_MS, iterations: Infinity});
+    } else {
+      packOn = true; packT0 = Date.now() / 1000;
+    }
+  } else {
+    var p0 = packPos(0);
+    packEl.style.transform = "translate3d(" + p0.x + "px," + p0.y + "px,0px)";
+  }
+
+  function packTick(){
+    if (!packOn || reduce) return;
+    var t = Date.now() / 1000 - packT0;
+    var pp = packPos(t);
+    packEl.style.transform = "translate3d(" + pp.x + "px," + pp.y + "px,0px)";
+    setTimeout(packTick, 50);
+  }
+  packTick();
+
+  if (reduce){
+    k = 0; auto = false;
+    scrub.value = "0";
+    world.classList.add("is-scroll");   /* поза встаёт мгновенно, без перехода */
+    document.getElementById("scrollHint").textContent = "фигура в сборке (упрощённое движение включено)";
+  }
+  setPressed();
+  applyK();
+  scrollDrive();
+})();
+</script>
+</body>
+</html>

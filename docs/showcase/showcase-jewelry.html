@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D-карта ювелирного рынка — витрина</title>
+<style>
+  :root{
+    --bg:#111524;
+    --card:#161c30;
+    --text:#eef2f9;
+    --muted:#b8c3d6;
+    --accent:#7bc4ff;
+    --ease:cubic-bezier(.22,1,.36,1);
+    --r-lg:14px;
+    --r-sm:10px;
+    --contour:#7bc4ff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+    min-height:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:28px 16px 48px;
+  }
+  .wrap{width:min(1060px,100%)}
+  header.top{margin-bottom:18px}
+  .kicker{
+    display:inline-block;
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--accent);
+    border:1px solid rgba(123,196,255,.35);
+    border-radius:999px;
+    padding:5px 12px;
+    margin-bottom:12px;
+  }
+  h1{font-size:clamp(22px,3.4vw,34px);font-weight:650;line-height:1.2}
+  .sub{color:var(--muted);font-size:15px;margin-top:8px;max-width:70ch;line-height:1.55}
+  .controls{
+    display:flex;flex-wrap:wrap;gap:10px;
+    margin:18px 0 14px;
+  }
+  .btn{
+    appearance:none;
+    background:var(--card);
+    color:var(--text);
+    border:1px solid rgba(184,195,214,.22);
+    border-radius:var(--r-sm);
+    padding:10px 16px;
+    font-size:14px;
+    cursor:pointer;
+    transition:transform 200ms var(--ease),opacity 200ms var(--ease);
+  }
+  .btn:hover{transform:translateY(-1px);border-color:var(--accent)}
+  .btn:active{transform:translateY(0)}
+  .btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .scene-card{
+    background:var(--card);
+    border:1px solid rgba(184,195,214,.14);
+    border-radius:var(--r-lg);
+    padding:14px;
+  }
+  .scene{
+    position:relative;
+    width:100%;
+    aspect-ratio:16/9;
+    border-radius:var(--r-sm);
+    overflow:hidden;
+    background:#0d1120;
+  }
+  .scene canvas{
+    position:absolute;left:-18px;top:-18px;
+    width:calc(100% + 36px);height:calc(100% + 36px);
+    display:block;
+  }
+  #relief{z-index:1}
+  #iso{z-index:2;pointer-events:none}
+  .grain{
+    position:absolute;inset:0;z-index:3;pointer-events:none;opacity:.07;
+  }
+  .dots{position:absolute;inset:0;z-index:4}
+  .dot{
+    position:absolute;
+    transform:translate(-50%,-50%);
+    display:flex;align-items:center;gap:8px;
+    background:none;border:none;cursor:pointer;
+    padding:6px;
+    transition:transform 200ms var(--ease);
+  }
+  .dot:hover{transform:translate(-50%,-50%) scale(1.08)}
+  .dot:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:8px}
+  .dot .pin{
+    width:14px;height:14px;border-radius:50%;
+    background:var(--bg);
+    border:2px solid var(--accent);
+    flex:none;
+    transition:transform 200ms var(--ease),opacity 200ms var(--ease);
+  }
+  .dot[aria-expanded="true"] .pin{background:var(--accent)}
+  .dot .lbl{
+    font-size:12.5px;color:var(--text);
+    background:rgba(13,17,32,.82);
+    border:1px solid rgba(184,195,214,.25);
+    border-radius:999px;
+    padding:3px 10px;
+    white-space:nowrap;
+  }
+  .legend{
+    display:flex;flex-wrap:wrap;gap:8px 18px;
+    margin-top:12px;
+    color:var(--muted);font-size:13px;
+  }
+  .legend span{display:inline-flex;align-items:center;gap:7px}
+  .sw{width:22px;height:3px;border-radius:2px;background:var(--contour);opacity:.85}
+  .sw.low{opacity:.35}
+  .niche-card{
+    margin-top:14px;
+    background:var(--bg);
+    border:1px solid rgba(123,196,255,.3);
+    border-left:3px solid var(--accent);
+    border-radius:var(--r-sm);
+    padding:14px 16px;
+    min-height:96px;
+    transition:opacity 220ms var(--ease),transform 220ms var(--ease);
+  }
+  .niche-card.swap{opacity:0;transform:translateY(6px)}
+  .niche-card h2{font-size:17px;margin-bottom:6px}
+  .niche-card p{font-size:14px;line-height:1.55;color:var(--muted)}
+  .niche-card p b{color:var(--text);font-weight:600}
+  .foot{margin-top:14px;color:var(--muted);font-size:12.5px;line-height:1.6}
+  @media (max-width:640px){
+    .dot .lbl{font-size:11px;padding:2px 8px}
+    .scene{aspect-ratio:4/3}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .btn,.dot,.niche-card{transition:none}
+    .dot:hover{transform:translate(-50%,-50%)}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <span class="kicker">Витрина 2 · карта рынка</span>
+    <h1>3D-карта ювелирного рынка</h1>
+    <p class="sub">Процедурный рельеф: высота холма — условная плотность ниши.
+    Тонкие изолинии поверх показывают форму склонов. Наведите курсор или коснитесь точки-витрины,
+    чтобы увидеть суть ниши и её главный риск. Вся графика вычисляется в браузере,
+    внешних картинок нет.</p>
+  </header>
+
+  <div class="controls" role="group" aria-label="Управление сценой">
+    <button class="btn" id="btnRelief" type="button">Рельеф: вкл</button>
+    <button class="btn" id="btnPalette" type="button">Палитра контуров: голубая</button>
+    <button class="btn" id="btnDrift" type="button">Дрейф: вкл</button>
+  </div>
+
+  <div class="scene-card">
+    <div class="scene" id="scene">
+      <canvas id="relief"></canvas>
+      <canvas id="iso"></canvas>
+      <canvas class="grain" id="grain" aria-hidden="true"></canvas>
+      <div class="dots" id="dots"></div>
+    </div>
+    <div class="legend" aria-hidden="true">
+      <span><i class="sw"></i>изолиния: выше плотность ниши</span>
+      <span><i class="sw low"></i>низкий склон</span>
+      <span>точка — витрина ниши (6 шт.)</span>
+    </div>
+    <section class="niche-card" id="nicheCard" aria-live="polite">
+      <h2 id="ncTitle">Выберите витрину</h2>
+      <p id="ncBody">Наведите курсор на точку на карте или коснитесь её — здесь появятся суть ниши и главный риск.</p>
+    </section>
+  </div>
+
+  <p class="foot">Рельеф и изолинии построены процедурно (сумма гауссовых пиков + детерминированный шум,
+  изолинии — метод marching squares). Работает из file://, без сети и библиотек.</p>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var EASE_NOTE = "cubic-bezier(.22,1,.36,1)";
+  var reduceMotion = window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- детерминированный PRNG ---------- */
+  function mulberry32(seed){
+    var a = seed >>> 0;
+    return function(){
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      var t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  /* ---------- ниши: 6 нейтральных названий ---------- */
+  var NICHES = [
+    { id:"rings",    name:"Кольца",          x:0.20, y:0.30, amp:1.00, sigma:0.135,
+      essence:"Самый ликвидный сегмент: понятный размерный ряд и устойчивый повседневный спрос.",
+      risk:"Высокая конкуренция давит наценку — выигрывает оборот, а не цена." },
+    { id:"chains",   name:"Цепи",            x:0.44, y:0.60, amp:0.90, sigma:0.125,
+      essence:"Весовая категория: ценность изделия честно следует за граммами и сложностью плетения.",
+      risk:"Зависимость от котировок металла и смены моды на плетения." },
+    { id:"earrings", name:"Серьги",          x:0.68, y:0.27, amp:0.95, sigma:0.120,
+      essence:"Подарочный спрос с пиками перед праздниками и широким диапазоном дизайна.",
+      risk:"Сезонные провалы и возвраты после примерки." },
+    { id:"bracelets",name:"Браслеты",         x:0.83, y:0.65, amp:0.80, sigma:0.115,
+      essence:"Ниша комплектов: естественная допродажа к кольцам и серьгам.",
+      risk:"Сложная размерная сетка и низкая оборачиваемость редких размеров." },
+    { id:"custom",   name:"Кастом на заказ", x:0.30, y:0.78, amp:0.75, sigma:0.110,
+      essence:"Изделия по эскизу клиента: маржа за уникальность, а не за металл.",
+      risk:"Длинные сроки, правки и споры о соответствии готового изделия эскизу." },
+    { id:"buyout",   name:"Ломбард-выкуп",   x:0.585,y:0.435,amp:0.70, sigma:0.100,
+      essence:"Оборот вторичных изделий: сырьё для переплава и перепродажи.",
+      risk:"Экспертиза подлинности и пробы — одна ошибка перевешивает партию." }
+  ];
+
+  /* ---------- поле высот: пики + value noise ---------- */
+  var rnd = mulberry32(20261106);
+  var PERM = new Uint8Array(512);
+  (function(){
+    var p = new Uint8Array(256), i, j, t;
+    for (i = 0; i < 256; i++) p[i] = i;
+    for (i = 255; i > 0; i--){ j = (rnd() * (i + 1)) | 0; t = p[i]; p[i] = p[j]; p[j] = t; }
+    for (i = 0; i < 512; i++) PERM[i] = p[i & 255];
+  })();
+  function vnoise(x, y){
+    var xi = Math.floor(x), yi = Math.floor(y);
+    var xf = x - xi, yf = y - yi;
+    function h(ix, iy){ return PERM[(PERM[ix & 255] + iy) & 255] / 255; }
+    var u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
+    var a = h(xi, yi), b = h(xi + 1, yi), c = h(xi, yi + 1), d = h(xi + 1, yi + 1);
+    return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
+  }
+  function heightAt(x, y){
+    var h = 0, i, n;
+    for (i = 0; i < NICHES.length; i++){
+      n = NICHES[i];
+      var dx = x - n.x, dy = (y - n.y) * 1.25;
+      h += n.amp * Math.exp(-(dx * dx + dy * dy) / (2 * n.sigma * n.sigma));
+    }
+    h += 0.10 * vnoise(x * 5.1, y * 5.1) + 0.05 * vnoise(x * 11.7 + 3.3, y * 11.7 + 7.1);
+    return h; // ~0..1.15
+  }
+  var HMAX = 1.15;
+
+  /* ---------- канвасы ---------- */
+  var scene = document.getElementById("scene");
+  var reliefCv = document.getElementById("relief");
+  var isoCv = document.getElementById("iso");
+  var grainCv = document.getElementById("grain");
+  var rctx = reliefCv.getContext("2d");
+  var ictx = isoCv.getContext("2d");
+
+  var W = 0, H = 0;
+  var reliefOn = true;
+
+  function fit(){
+    var r = scene.getBoundingClientRect();
+    W = Math.max(320, Math.round(r.width));
+    H = Math.max(240, Math.round(r.height));
+    reliefCv.width = W; reliefCv.height = H;
+    isoCv.width = W; isoCv.height = H;
+    drawRelief();
+    drawContours();
+  }
+
+  /* ---------- рельеф: hillshade на грубой сетке + upscale ---------- */
+  var GW = 240, GH = 135, grid = new Float32Array(GW * GH);
+  (function(){
+    for (var j = 0; j < GH; j++)
+      for (var i = 0; i < GW; i++)
+        grid[j * GW + i] = heightAt(i / (GW - 1), j / (GH - 1)) / HMAX;
+  })();
+  function gridH(i, j){
+    if (i < 0) i = 0; if (j < 0) j = 0;
+    if (i > GW - 1) i = GW - 1; if (j > GH - 1) j = GH - 1;
+    return grid[j * GW + i];
+  }
+
+  function drawRelief(){
+    var off = document.createElement("canvas");
+    off.width = GW; off.height = GH;
+    var c = off.getContext("2d");
+    var img = c.createImageData(GW, GH);
+    var lx = -0.55, ly = -0.75, lz = 0.62; // свет с северо-запада
+    var ll = Math.sqrt(lx*lx + ly*ly + lz*lz);
+    lx /= ll; ly /= ll; lz /= ll;
+    for (var j = 0; j < GH; j++){
+      for (var i = 0; i < GW; i++){
+        var h = gridH(i, j);
+        var dx = (gridH(i + 1, j) - gridH(i - 1, j)) * 2.4;
+        var dy = (gridH(i, j + 1) - gridH(i, j - 1)) * 2.4;
+        var nx = -dx, ny = -dy, nz = 1;
+        var nl = Math.sqrt(nx*nx + ny*ny + nz*nz);
+        var shade = (nx*lx + ny*ly + nz*lz) / nl; // ~-1..1
+        shade = 0.5 + 0.5 * shade;                // 0..1
+        var o = (j * GW + i) * 4, R, G, B;
+        if (!reliefOn){
+          // плоский режим: едва видимый след высот
+          R = 15 + h * 14; G = 19 + h * 16; B = 34 + h * 22;
+        } else {
+          var t = Math.min(1, Math.max(0, h));
+          // тёмно-синяя рампа: #0d1120 -> #1a2340 -> акцент на вершинах
+          R = 13 + t * 34 + shade * 14;
+          G = 17 + t * 44 + shade * 20;
+          B = 32 + t * 62 + shade * 26;
+          var glow = Math.max(0, t - 0.55) / 0.45; // подсветка вершин голубым
+          R += glow * 40 * shade; G += glow * 90 * shade; B += glow * 130 * shade;
+        }
+        img.data[o] = R > 255 ? 255 : R;
+        img.data[o+1] = G > 255 ? 255 : G;
+        img.data[o+2] = B > 255 ? 255 : B;
+        img.data[o+3] = 255;
+      }
+    }
+    c.putImageData(img, 0, 0);
+    rctx.imageSmoothingEnabled = true;
+    rctx.clearRect(0, 0, W, H);
+    rctx.drawImage(off, 0, 0, W, H);
+  }
+
+  /* ---------- изолинии: marching squares ---------- */
+  var LEVELS = 7;
+  var CNX = 100, CNY = 58;
+  var PALETTES = [
+    { name:"голубая",  color:"#7bc4ff" },
+    { name:"стальная", color:"#9fb3c8" },
+    { name:"янтарная", color:"#e3b96f" }
+  ];
+  var palIdx = 0;
+
+  function buildField(){
+    var field = new Float32Array(CNX * CNY), i, j;
+    for (j = 0; j < CNY; j++)
+      for (i = 0; i < CNX; i++)
+        field[j * CNX + i] = heightAt(i / (CNX - 1), j / (CNY - 1)) / HMAX;
+    return field;
+  }
+
+  function contourPaths(field, level){
+    var segs = [], i, j;
+    function P(ax, ay, bx, by){ // отрезок в пикселях канваса
+      segs.push([ax / (CNX - 1) * W, ay / (CNY - 1) * H,
+                 bx / (CNX - 1) * W, by / (CNY - 1) * H]);
+    }
+    for (j = 0; j < CNY - 1; j++){
+      for (i = 0; i < CNX - 1; i++){
+        var a = field[j * CNX + i] - level,
+            b = field[j * CNX + i + 1] - level,
+            c = field[(j + 1) * CNX + i + 1] - level,
+            d = field[(j + 1) * CNX + i] - level;
+        var idx = (a > 0 ? 8 : 0) | (b > 0 ? 4 : 0) | (c > 0 ? 2 : 0) | (d > 0 ? 1 : 0);
+        if (idx === 0 || idx === 15) continue;
+        var top = [i + a / (a - b), j],
+            right = [i + 1, j + b / (b - c)],
+            bottom = [i + d / (d - c), j + 1],
+            left = [i, j + a / (a - d)];
+        // защита от деления на ноль на ровных участках
+        function sane(p){ return isFinite(p[0]) && isFinite(p[1]); }
+        var parts = [];
+        if (idx === 5 || idx === 10){
+          // седло: разрешаем средним по ячейке (см. hairline-contours.md)
+          var m = (a + b + c + d) / 4;
+          var hi = m > 0;
+          if (idx === 5) parts = hi ? [[top, right], [left, bottom]] : [[top, left], [bottom, right]];
+          else parts = hi ? [[top, left], [bottom, right]] : [[top, right], [left, bottom]];
+        } else switch (idx){
+          case 1: case 14: parts = [[left, bottom]]; break;
+          case 2: case 13: parts = [[bottom, right]]; break;
+          case 3: case 12: parts = [[left, right]]; break;
+          case 4: case 11: parts = [[top, right]]; break;
+          case 5: parts = [[top, left], [bottom, right]]; break;
+          case 6: case 9: parts = [[top, bottom]]; break;
+          case 7: case 8: parts = [[top, left]]; break;
+          case 10: parts = [[top, right], [left, bottom]]; break;
+        }
+        for (var k = 0; k < parts.length; k++)
+          if (sane(parts[k][0]) && sane(parts[k][1])) P(parts[k][0][0], parts[k][0][1], parts[k][1][0], parts[k][1][1]);
+      }
+    }
+    return segs;
+  }
+
+  function drawContours(){
+    ictx.clearRect(0, 0, W, H);
+    ictx.lineWidth = 1;
+    ictx.lineCap = "round";
+    var base = PALETTES[palIdx].color;
+    var field = buildField();
+    for (var L = 0; L < LEVELS; L++){
+      var level = 0.12 + (L / (LEVELS - 1)) * 0.68;
+      var segs = contourPaths(field, level);
+      ictx.strokeStyle = base;
+      ictx.globalAlpha = 0.18 + (L / (LEVELS - 1)) * 0.62;
+      ictx.beginPath();
+      for (var s = 0; s < segs.length; s++){
+        ictx.moveTo(segs[s][0], segs[s][1]);
+        ictx.lineTo(segs[s][2], segs[s][3]);
+      }
+      ictx.stroke();
+    }
+    ictx.globalAlpha = 1;
+    document.documentElement.style.setProperty("--contour", base);
+  }
+
+  /* ---------- зерно (процедурный data-URL, без сети) ---------- */
+  (function grain(){
+    var S = 128, c = document.createElement("canvas");
+    c.width = c.height = S;
+    var g = c.getContext("2d"), img = g.createImageData(S, S), s = 987654321, i;
+    for (i = 0; i < S * S; i++){
+      s = (s * 1664525 + 1013904223) >>> 0;
+      var v = (s >>> 24) / 255, lum = v < 0.5 ? 0 : 255;
+      img.data[i*4] = img.data[i*4+1] = img.data[i*4+2] = lum;
+      img.data[i*4+3] = Math.abs(v - 0.5) * 2 * 255 * 0.5;
+    }
+    g.putImageData(img, 0, 0);
+    grainCv.style.backgroundImage = "url(" + c.toDataURL("image/png") + ")";
+    grainCv.style.backgroundSize = S + "px " + S + "px";
+  })();
+
+  /* ---------- точки-витрины + карточка ---------- */
+  var dotsBox = document.getElementById("dots");
+  var card = document.getElementById("nicheCard");
+  var ncTitle = document.getElementById("ncTitle");
+  var ncBody = document.getElementById("ncBody");
+
+  NICHES.forEach(function(n, k){
+    var b = document.createElement("button");
+    b.className = "dot";
+    b.type = "button";
+    b.style.left = (n.x * 100).toFixed(2) + "%";
+    b.style.top = (n.y * 100).toFixed(2) + "%";
+    b.setAttribute("aria-expanded", "false");
+    b.setAttribute("aria-label", "Ниша: " + n.name);
+    b.innerHTML = '<span class="pin"></span><span class="lbl">' + n.name + "</span>";
+    function show(){
+      card.classList.add("swap");
+      window.setTimeout(function(){
+        ncTitle.textContent = (k + 1) + ". " + n.name;
+        ncBody.innerHTML = "";
+        var b1 = document.createElement("b"); b1.textContent = "Суть: ";
+        var b2 = document.createElement("b"); b2.textContent = "Риск: ";
+        ncBody.appendChild(b1);
+        ncBody.appendChild(document.createTextNode(n.essence + " "));
+        ncBody.appendChild(document.createElement("br"));
+        ncBody.appendChild(b2);
+        ncBody.appendChild(document.createTextNode(n.risk));
+        card.classList.remove("swap");
+      }, reduceMotion ? 0 : 140);
+      var all = dotsBox.querySelectorAll(".dot");
+      for (var q = 0; q < all.length; q++) all[q].setAttribute("aria-expanded", "false");
+      b.setAttribute("aria-expanded", "true");
+    }
+    b.addEventListener("mouseenter", show);
+    b.addEventListener("focus", show);
+    b.addEventListener("click", show);
+    dotsBox.appendChild(b);
+  });
+
+  /* ---------- кнопки ---------- */
+  var btnRelief = document.getElementById("btnRelief");
+  var btnPalette = document.getElementById("btnPalette");
+  var btnDrift = document.getElementById("btnDrift");
+  var driftOn = !reduceMotion;
+
+  btnRelief.addEventListener("click", function(){
+    reliefOn = !reliefOn;
+    btnRelief.textContent = reliefOn ? "Рельеф: вкл" : "Рельеф: плоско";
+    drawRelief();
+  });
+  btnPalette.addEventListener("click", function(){
+    palIdx = (palIdx + 1) % PALETTES.length;
+    btnPalette.textContent = "Палитра контуров: " + PALETTES[palIdx].name;
+    drawContours();
+  });
+  function paintDriftBtn(){
+    btnDrift.textContent = "Дрейф: " + (driftOn ? "вкл" : "выкл");
+  }
+  btnDrift.addEventListener("click", function(){
+    driftOn = !driftOn;
+    paintDriftBtn();
+    if (!driftOn){
+      isoCv.style.transform = "";
+      reliefCv.style.transform = "";
+    }
+  });
+  paintDriftBtn();
+
+  /* ---------- параллакс + дрейф (только transform/opacity) ---------- */
+  var tx = 0, ty = 0, cx = 0, cy = 0, raf = null, t0 = performance.now();
+  scene.addEventListener("pointermove", function(e){
+    if (reduceMotion) return;
+    var r = scene.getBoundingClientRect();
+    tx = ((e.clientX - r.left) / r.width) * 2 - 1;
+    ty = ((e.clientY - r.top) / r.height) * 2 - 1;
+    if (!raf) raf = requestAnimationFrame(tick);
+  });
+  scene.addEventListener("pointerleave", function(){
+    tx = 0; ty = 0;
+    if (!raf && !reduceMotion) raf = requestAnimationFrame(tick);
+  });
+  function tick(now){
+    raf = null;
+    cx += (tx - cx) * 0.12;
+    cy += (ty - cy) * 0.12;
+    var t = ((now || performance.now()) - t0) / 1000;
+    if (driftOn && !reduceMotion){
+      var dx = Math.sin(t * 0.25) * 6, dy = Math.cos(t * 0.19) * 5;
+      isoCv.style.transform = "translate3d(" + (cx * 10 + dx).toFixed(2) + "px," + (cy * 8 + dy).toFixed(2) + "px,0)";
+      reliefCv.style.transform = "translate3d(" + (cx * 4).toFixed(2) + "px," + (cy * 3).toFixed(2) + "px,0) scale(1.03)";
+    } else {
+      isoCv.style.transform = "translate3d(" + (cx * 10).toFixed(2) + "px," + (cy * 8).toFixed(2) + "px,0)";
+      reliefCv.style.transform = "";
+    }
+    if (Math.abs(tx - cx) > 0.001 || Math.abs(ty - cy) > 0.001 || (driftOn && !reduceMotion))
+      raf = requestAnimationFrame(tick);
+    else {
+      isoCv.style.transform = "";
+      reliefCv.style.transform = "";
+    }
+  }
+  document.addEventListener("visibilitychange", function(){
+    if (document.hidden && raf){ cancelAnimationFrame(raf); raf = null; }
+    else if (!document.hidden && driftOn && !reduceMotion && !raf) raf = requestAnimationFrame(tick);
+  });
+  if (driftOn && !reduceMotion) raf = requestAnimationFrame(tick);
+
+  window.addEventListener("resize", function(){
+    window.clearTimeout(window.__jrz);
+    window.__jrz = window.setTimeout(fit, 150);
+  });
+
+  fit();
+})();
+</script>
+</body>
+</html>
