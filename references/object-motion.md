@@ -59,7 +59,7 @@
     <div class="orbit-axis"></div>
     <div class="orbit-body">
       <div class="face f1">что внутри<br>6 узлов</div>
-      <div class="face f2">цена<br>по запросу</div>
+      <div class="face f2">цена<br>от 25 000 ₽</div>
       <div class="face f3">срок<br>5–9 дней</div>
       <div class="face f4">чего не делает<br>не пишет первым</div>
     </div>
