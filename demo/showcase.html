@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ds_landing-motion — моушн, который несёт смысл</title>
+<style>
+  :root{
+    --bg:#111524; --card:#161c30; --card2:#1a2138; --ink:#eef2f9; --body:#b8c3d6;
+    --meta:#8893a8; --accent:#7bc4ff; --ok:#7fe0a8; --line:rgba(255,255,255,.10);
+    --ease:cubic-bezier(.22,1,.36,1); --r:14px; --r2:10px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+    line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+
+  /* ---------- nav ---------- */
+  nav{position:sticky;top:0;z-index:20;backdrop-filter:blur(10px);background:rgba(17,21,36,.82);
+    border-bottom:1px solid var(--line)}
+  nav .in{display:flex;align-items:center;gap:24px;height:66px}
+  .logo{font-weight:700;font-size:15px;letter-spacing:-.01em}
+  .logo span{color:var(--accent)}
+  nav .links{margin-left:auto;display:flex;gap:22px;font-size:14px}
+  nav a{color:var(--body);text-decoration:none;transition:color .18s var(--ease)}
+  nav a:hover{color:var(--ink)}
+  .nav-cta{padding:9px 18px;border-radius:var(--r2);background:var(--accent);color:#0d1526 !important;
+    font-weight:600;font-size:14px}
+
+  /* ---------- hero ---------- */
+  .hero{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,1fr);gap:44px;align-items:center;
+    padding:64px 0 76px}
+  .kicker{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+  h1{font-size:clamp(32px,5vw,58px);line-height:1.04;letter-spacing:-.03em;font-weight:700;max-width:15ch}
+  h1 .ch{display:inline-block;opacity:0;transform:translateY(28px)}
+  h1.settled .ch{opacity:1;transform:none}
+  h1 .word{display:inline-block;white-space:nowrap}
+  .lead{color:var(--body);font-size:17.5px;margin:22px 0 28px;max-width:44ch}
+  .cta{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  .btn{font:inherit;cursor:pointer;border:0;border-radius:var(--r2);padding:14px 26px;font-size:15px;font-weight:600;
+    transition:transform .18s var(--ease),background .18s var(--ease);text-decoration:none;display:inline-block}
+  .btn:active{transform:scale(.97)}
+  .btn-p{background:var(--accent);color:#0d1526}
+  .btn-p:hover{transform:translateY(-1px)}
+  .btn-g{background:transparent;color:var(--body);box-shadow:inset 0 0 0 1px var(--line)}
+  .btn-g:hover{color:var(--ink);background:rgba(255,255,255,.04)}
+  .hero-note{margin-top:18px;font-size:13px;color:var(--meta)}
+
+  /* ---------- сцена: 3D-карточка продукта ---------- */
+  .stage{position:relative;min-height:400px;perspective:1200px}
+  .obj{position:absolute;left:50%;top:50%;width:360px;height:236px;margin:-118px 0 0 -180px;
+    transform-style:preserve-3d;transition:transform .5s var(--ease)}
+  .layer{position:absolute;inset:0;border-radius:var(--r);background:var(--card);
+    border:1px solid var(--line);box-shadow:0 40px 90px rgba(0,0,0,.55);transform-style:preserve-3d}
+  .layer.back{transform:translateZ(-90px) translateY(26px) scale(.94);background:#131a2c;opacity:.85}
+  .layer.mid{transform:translateZ(-45px) translateY(13px) scale(.97);background:#151c31;opacity:.94}
+  .layer.front{transform:translateZ(0);padding:22px}
+  .row{display:flex;align-items:center;gap:12px}
+  .dot{width:9px;height:9px;border-radius:50%;background:#2c3654}
+  .brand{font-size:12.5px;color:var(--meta);margin-left:6px}
+  .task{margin-top:18px;padding:11px 13px;border-radius:9px;background:#1a2138;border:1px solid var(--line);
+    font-size:13.5px;color:var(--ink);line-height:1.4}
+  .status{margin-top:10px;font-size:12.5px;color:var(--meta)}
+  .status b{color:var(--accent);font-weight:600}
+  .result{margin-top:14px;display:flex;align-items:center;gap:10px;padding:11px 13px;border-radius:9px;
+    background:rgba(127,224,168,.07);border:1px solid rgba(127,224,168,.28)}
+  .tick{width:22px;height:22px;border-radius:50%;background:var(--ok);color:#0d1526;display:flex;
+    align-items:center;justify-content:center;font-size:13px;font-weight:700;flex:none}
+  .rt{font-size:13px;font-weight:600}
+  .rs{font-size:11.5px;color:var(--meta);margin-top:1px}
+  .rnum{margin-left:auto;font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
+  .rnum small{font-size:10.5px;color:var(--meta);font-weight:400}
+  .chip{margin-top:20px;display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;
+    background:rgba(123,196,255,.10);border:1px solid rgba(123,196,255,.32);color:var(--accent);font-size:12.5px;font-weight:600}
+  .num-big{margin-top:18px;font-size:40px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .num-big small{font-size:13px;color:var(--meta);font-weight:400;margin-left:8px}
+
+  /* ---------- секции ---------- */
+  section{padding:84px 0;border-top:1px solid var(--line)}
+  .sec-head{display:flex;gap:20px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;margin-bottom:36px}
+  h2{font-size:clamp(24px,3vw,34px);line-height:1.15;letter-spacing:-.02em;max-width:22ch}
+  .sec-sub{color:var(--meta);font-size:15px;max-width:38ch}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;
+    transition:border-color .2s var(--ease),transform .2s var(--ease)}
+  .card:hover{border-color:rgba(123,196,255,.34);transform:translateY(-2px)}
+  .canvas-box{height:170px;border-radius:var(--r2);background:#0d1120;overflow:hidden;position:relative;
+    border:1px solid rgba(255,255,255,.06)}
+  .canvas-box canvas{display:block;width:100%;height:100%}
+  .card h3{font-size:16px;margin:14px 0 6px}
+  .card p{font-size:13.5px;color:var(--body)}
+
+  /* ---------- цифры ---------- */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+  .stat{padding:22px;border:1px solid var(--line);border-radius:var(--r);background:var(--card)}
+  .stat b{display:block;font-size:38px;letter-spacing:-.02em;color:var(--accent);font-variant-numeric:tabular-nums}
+  .stat span{font-size:13px;color:var(--body)}
+
+  /* ---------- финал ---------- */
+  .final{text-align:center;padding:96px 0}
+  .final h2{margin:0 auto 18px;max-width:20ch}
+  .final p{color:var(--body);max-width:46ch;margin:0 auto 30px;font-size:16px}
+
+  footer{border-top:1px solid var(--line);padding:26px 0;font-size:13px;color:var(--meta)}
+  footer .in{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  footer a{color:var(--accent);text-decoration:none}
+
+  @media (max-width:900px){
+    .hero{grid-template-columns:1fr;gap:36px;padding:44px 0 56px}
+    .grid3{grid-template-columns:1fr}
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .stage{min-height:380px}
+    h1{max-width:20ch}
+    nav .links{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none !important;transition:none !important}
+    h1 .ch{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+
+<nav><div class="wrap in">
+  <div class="logo">ds_<span>landing-motion</span></div>
+  <div class="links">
+    <a href="#priemy">Приёмы</a><a href="#chisla">Проверки</a>
+    <a class="nav-cta" href="https://github.com/r0undm1dn1ghty-star/ds_landing-motion">Репозиторий</a>
+  </div>
+</div></nav>
+
+<div class="wrap">
+  <div class="hero">
+    <div>
+      <div class="kicker">Скилл для ИИ-агентов</div>
+      <h1 id="h1">Моушн, который несёт смысл</h1>
+      <p class="lead">Движение на лендинге, которое объясняет продукт, а не украшает пустоту:
+        3D из плоской картинки, живые схемы, контурные карты, текстовые сборки. Без GSAP и Three.js.</p>
+      <div class="cta">
+        <a class="btn btn-p" href="https://github.com/r0undm1dn1ghty-star/ds_landing-motion">Открыть репозиторий</a>
+        <a class="btn btn-g" href="#priemy">Посмотреть приёмы</a>
+      </div>
+      <p class="hero-note">CSS · SVG · WAAPI · WebGL2 — ни одной зависимости, ни одной сборки</p>
+    </div>
+
+    <div class="stage" id="stage">
+      <div class="obj" id="obj">
+        <div class="layer back"></div>
+        <div class="layer mid"></div>
+        <div class="layer front">
+          <div class="row"><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            <span class="brand">сборка · лендинг</span></div>
+          <div class="task">Собрать hero: объект, схема, сборка заголовка</div>
+          <div class="status"><b>Агент:</b> собрал 3 приёма · проверил луп</div>
+          <div class="result">
+            <span class="tick">✓</span>
+            <div><div class="rt">Лендинг готов к показу</div>
+              <div class="rs">гейт 26/26 · 0 зависимостей</div></div>
+            <span class="rnum">3 <small>приёма</small></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section id="priemy"><div class="wrap">
+  <div class="sec-head">
+    <h2>Три приёма, которые работают на смысл</h2>
+    <p class="sec-sub">Каждый отвечает на вопрос «что это показывает» — и работает сам, без наведения.</p>
+  </div>
+  <div class="grid3">
+    <article class="card">
+      <div class="canvas-box"><canvas id="c-lines"></canvas></div>
+      <h3>Схема, которая рисуется</h3>
+      <p>Путь заявки прочерчивается по мере появления на экране — видно порядок, а не статичную картинку.</p>
+    </article>
+    <article class="card">
+      <div class="canvas-box"><canvas id="c-halftone"></canvas></div>
+      <h3>Печать вместо фотошопа</h3>
+      <p>Портрет переводится в полутоновую сетку точек: фон, который не спорит с текстом и держит характер.</p>
+    </article>
+    <article class="card">
+      <div class="canvas-box"><canvas id="c-contours"></canvas></div>
+      <h3>Карта плотности</h3>
+      <p>Изолинии показывают, где рынок плотнее: высота и частота линий читаются как рельеф.</p>
+    </article>
+  </div>
+</div></section>
+
+<section id="chisla"><div class="wrap">
+  <div class="sec-head">
+    <h2>Не «выглядит норм», а проверено</h2>
+    <p class="sec-sub">Гейт приёмки считает пиксели и совпадение кадров между запусками.</p>
+  </div>
+  <div class="stats">
+    <div class="stat"><b data-count="26">0</b><span>проверок гейта пройдено</span></div>
+    <div class="stat"><b data-count="13">0</b><span>приёмов в демо</span></div>
+    <div class="stat"><b data-count="17496">0</b><span>сегментов контура за 106 мс</span></div>
+    <div class="stat"><b data-count="0">0</b><span>зависимостей и сборки</span></div>
+  </div>
+</div></section>
+
+<div class="final wrap">
+  <h2>Движение должно что-то показывать</h2>
+  <p>Если эффект не отвечает одной фразой, что он объясняет, — он украшение. Скилл вырезает украшения и оставляет смысл.</p>
+  <a class="btn btn-p" href="https://github.com/r0undm1dn1ghty-star/ds_landing-motion">Забрать на GitHub</a>
+</div>
+
+<footer><div class="wrap in">
+  <span>MIT · без зависимостей · открывается из файла</span>
+  <span><a href="https://t.me/discoverysystem">t.me/discoverysystem</a></span>
+</div></footer>
+
+<script>
+(function(){
+  "use strict";
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var EASE = "cubic-bezier(.22,1,.36,1)";
+
+  /* --- заголовок --- */
+  var h1 = document.getElementById("h1"), phrase = h1.textContent;
+  h1.setAttribute("aria-label", phrase); h1.textContent = "";
+  phrase.split(" ").forEach(function(w, wi, arr){
+    var word = document.createElement("span"); word.className="word"; word.setAttribute("aria-hidden","true");
+    w.split("").forEach(function(c){ var s=document.createElement("span"); s.className="ch"; s.textContent=c; word.appendChild(s); });
+    h1.appendChild(word);
+    if (wi<arr.length-1) h1.appendChild(document.createTextNode(" "));
+  });
+  function reveal(){
+    var chars = h1.querySelectorAll(".ch");
+    if (reduce){ h1.classList.add("settled"); return; }
+    chars.forEach(function(c,i){ c.animate([{opacity:0,transform:"translateY(28px)"},{opacity:1,transform:"none"}],
+      {duration:700, delay:i*22, easing:EASE, fill:"forwards"}); });
+    setTimeout(function(){ h1.classList.add("settled"); }, 700 + chars.length*22 + 60);
+  }
+  reveal();
+
+  /* --- наклон карточки по курсору --- */
+  var stage=document.getElementById("stage"), obj=document.getElementById("obj");
+  if (!reduce){
+    stage.addEventListener("pointermove", function(e){
+      var r=stage.getBoundingClientRect();
+      var dx=(e.clientX-(r.left+r.width/2))/r.width, dy=(e.clientY-(r.top+r.height/2))/r.height;
+      obj.style.transform="rotateY("+(dx*10).toFixed(2)+"deg) rotateX("+(-dy*8).toFixed(2)+"deg)";
+    });
+    stage.addEventListener("pointerleave", function(){ obj.style.transform=""; });
+  }
+
+  /* --- счётчики --- */
+  var io = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var el=e.target, to=+el.dataset.count, t0=performance.now();
+      (function tick(){
+        var p=Math.min(1,(performance.now()-t0)/1200);
+        el.textContent = Math.round(to*(1-Math.pow(1-p,3))).toLocaleString("ru-RU");
+        if (p<1) requestAnimationFrame(tick);
+      })();
+      io.unobserve(el);
+    });
+  },{threshold:.4});
+  document.querySelectorAll("[data-count]").forEach(function(el){ io.observe(el); });
+
+  /* --- три приёма на канвасах --- */
+  function fit(c){ var d=Math.min(devicePixelRatio||1,1.5), r=c.getBoundingClientRect();
+    c.width=Math.max(1,Math.round(r.width*d)); c.height=Math.max(1,Math.round(r.height*d));
+    var x=c.getContext("2d"); x.setTransform(d,0,0,d,0,0); return {ctx:x,w:r.width,h:r.height}; }
+
+  // 1. схема: линия рисуется
+  (function(){
+    var c=document.getElementById("c-lines"), S=null, p=0;
+    function draw(){
+      var o=fit(c); S=o; var x=o.ctx,w=o.w,h=o.h;
+      x.clearRect(0,0,w,h);
+      var pts=[[14,h-24],[w*0.26,h-58],[w*0.46,h-40],[w*0.66,h-86],[w-14,h-64]];
+      x.strokeStyle="rgba(184,195,214,.16)"; x.lineWidth=1;
+      for(var gy=18; gy<h; gy+=26){ x.beginPath(); x.moveTo(0,gy); x.lineTo(w,gy); x.stroke(); }
+      x.strokeStyle="#7bc4ff"; x.lineWidth=2; x.beginPath(); x.moveTo(pts[0][0],pts[0][1]);
+      for(var i=1;i<pts.length;i++){
+        var a=pts[i-1],b=pts[i]; var mx=(a[0]+b[0])/2;
+        x.bezierCurveTo(mx,a[1],mx,b[1],b[0],b[1]);
+      }
+      var cut = p*(x.getLineDash?1:1);
+      x.setLineDash([400*p, 400]);
+      x.stroke(); x.setLineDash([]);
+      pts.forEach(function(pt){ x.beginPath(); x.arc(pt[0],pt[1],3,0,7); x.fillStyle="#7bc4ff"; x.fill(); });
+    }
+    function loop(ts){ if(!S) draw(); p=Math.min(1,((ts||0)%3600)/1800); draw(); if(!reduce) requestAnimationFrame(loop); }
+    if (reduce){ p=1; draw(); } else requestAnimationFrame(loop);
+  })();
+
+  // 2. halftone
+  (function(){
+    var c=document.getElementById("c-halftone"), done=false;
+    function draw(){
+      var o=fit(c), x=o.ctx, w=o.w, h=o.h; done=true;
+      x.fillStyle="#0d1120"; x.fillRect(0,0,w,h);
+      var step=7;
+      for(var yy=0; yy<h; yy+=step){
+        for(var xx=0; xx<w; xx+=step){
+          var cx=w*0.5, cy=h*0.52;
+          var d=Math.hypot((xx-cx)/(w*0.42),(yy-cy)/(h*0.52));
+          var r=(1-Math.min(1,d))*3.1;
+          if(r>0.4){ x.beginPath(); x.arc(xx,yy,r,0,7); x.fillStyle="rgba(123,196,255,"+(0.10+0.55*(1-d)).toFixed(3)+")"; x.fill(); }
+        }
+      }
+    }
+    draw(); addEventListener("resize", function(){ if(!reduce) draw(); });
+  })();
+
+  // 3. контуры (изолинии по сумме гауссов)
+  (function(){
+    var c=document.getElementById("c-contours");
+    function field(u,v){
+      var s=0, peaks=[[0.30,0.62,0.021,1.0],[0.62,0.38,0.017,0.85],[0.78,0.72,0.013,0.7],[0.45,0.28,0.010,0.55]];
+      for(var i=0;i<peaks.length;i++){ var p=peaks[i];
+        s+=p[3]*Math.exp(-((u-p[0])*(u-p[0])+(v-p[1])*(v-p[1]))/p[2]); }
+      return s;
+    }
+    function draw(){
+      var o=fit(c), x=o.ctx, w=o.w, h=o.h;
+      x.fillStyle="#0d1120"; x.fillRect(0,0,w,h);
+      var N=56, cell=w/N, grid=[];
+      for(var j=0;j<=N;j++){ grid[j]=[]; for(var i=0;i<=N;i++){ grid[j][i]=field(i/N, j/N); } }
+      for(var lv=1; lv<=7; lv++){
+        var t=lv*0.19;
+        x.strokeStyle="rgba(123,196,255,"+(0.18+0.10*lv).toFixed(2)+")"; x.lineWidth=1;
+        for(var j2=0;j2<N;j2++){ for(var i2=0;i2<N;i2++){
+          var a=grid[j2][i2], b=grid[j2][i2+1], cc=grid[j2+1][i2], d=grid[j2+1][i2+1];
+          var pts=[];
+          if((a>t)!==(b>t)) pts.push([i2+(t-a)/(b-a), j2]);
+          if((b>t)!==(d>t)) pts.push([i2+1, j2+(t-b)/(d-b)]);
+          if((d>t)!==(cc>t)) pts.push([i2+(t-d)/(cc-d), j2+1]);
+          if((cc>t)!==(a>t)) pts.push([i2, j2+(t-cc)/(a-cc)]);
+          if(pts.length>=2){ x.beginPath(); x.moveTo(pts[0][0]*cell, pts[0][1]*cell);
+            for(var k=1;k<pts.length;k++) x.lineTo(pts[k][0]*cell, pts[k][1]*cell); x.stroke(); }
+        }}
+      }
+    }
+    draw(); addEventListener("resize", function(){ if(!reduce) draw(); });
+  })();
+})();
+</script>
+</body>
+</html>
