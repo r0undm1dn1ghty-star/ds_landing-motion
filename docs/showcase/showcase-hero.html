@@ -27,7 +27,8 @@
   .copy .kicker{font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin-bottom:16px}
   .copy h1{font-size:clamp(30px,4.2vw,46px); line-height:1.08; font-weight:700; letter-spacing:-.01em}
   /* буквы прячутся ТОЛЬКО когда JS активен — без JS заголовок целый */
-  .js .copy h1 .ch{display:inline-block; opacity:0; transform:translateY(32px)}
+  .js .copy h1 .word{display:inline-block; white-space:nowrap}
+  .copy h1 .ch{display:inline-block; opacity:0; transform:translateY(32px)}
   .js .copy h1.settled .ch{opacity:1; transform:none}
   .copy p.lead{color:var(--muted); font-size:17px; line-height:1.55; margin:14px 0 20px; max-width:38ch}
   .cta-row{display:flex; gap:12px; flex-wrap:wrap; align-items:center}
@@ -184,11 +185,15 @@
   h1.setAttribute("aria-label", phrase);
   h1.textContent = "";
   phrase.split(" ").forEach(function(word, wi, arr){
+    var w = document.createElement("span");
+    w.className = "word";
+    w.setAttribute("aria-hidden","true");
     word.split("").forEach(function(chr){
       var s = document.createElement("span");
-      s.className = "ch"; s.setAttribute("aria-hidden","true"); s.textContent = chr;
-      h1.appendChild(s);
+      s.className = "ch"; s.textContent = chr;
+      w.appendChild(s);
     });
+    h1.appendChild(w);
     if (wi < arr.length - 1) h1.appendChild(document.createTextNode(" "));
   });
   function revealHeadline(){

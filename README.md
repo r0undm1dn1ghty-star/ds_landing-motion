@@ -1,6 +1,6 @@
 # ds_landing-motion — моушн и эффекты на лендинге
 
-![Обложка: живые кадры прогона демо](assets/cover.png)
+![ds_landing-motion — моушн и эффекты лендинга для ИИ-агентов](assets/cover.png)
 
 > **Скилл про движение, которое несёт информацию, и вкус, который его выбирает** — Victor Zaitsev / Discovery System
 >
@@ -50,9 +50,9 @@
 
 | Витрина | Что показывает | Открыть |
 |---|---|---|
-| Анатомия установки | 7 станций цепочки «агент за вечер»: от облачного сервера до довольного клиента, изометрия собирается и разбирается | [`docs/showcase/showcase-anatomy.html`](docs/showcase/showcase-anatomy.html) |
-| 3D-карта ювелирки | 6 ниш рынка на рельефной 3D-карте: суть ниши и её главный риск по клику | [`docs/showcase/showcase-jewelry.html`](docs/showcase/showcase-jewelry.html) |
-| Живой hero | 4 бита сценария «моушн за вечер»: курсор ставит задачу → агент отвечает → карточка результата → пейофф | [`docs/showcase/showcase-hero.html`](docs/showcase/showcase-hero.html) |
+| ![Анатомия установки](docs/showcase/preview-anatomy.png) | **Анатомия установки:** 7 станций цепочки «агент за вечер» — от облачного сервера до довольного клиента. Изометрия на `preserve-3d` разбирается и собирается, наведение на карточку подсвечивает её куб | [`showcase-anatomy.html`](docs/showcase/showcase-anatomy.html) |
+| ![3D-карта рынка](docs/showcase/preview-jewelry.png) | **3D-карта рынка:** рельеф из шести ниш на canvas2d, hairline-изолинии marching squares. Клик по точке — суть ниши и её главный риск | [`showcase-jewelry.html`](docs/showcase/showcase-jewelry.html) |
+| ![Живой hero](docs/showcase/preview-hero.png) | **Живой hero:** 4 бита за ~14 секунд — курсор ставит задачу, агент отвечает, карточка прилетает с роллом цифр, пейофф держится, сброс возвращает в начало | [`showcase-hero.html`](docs/showcase/showcase-hero.html) |
 
 ## Быстрый старт
 
