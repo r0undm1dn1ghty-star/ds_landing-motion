@@ -1,5 +1,13 @@
 # ds_landing-motion — моушн и эффекты на лендинге
 
+<p>
+  <img alt="license" src="https://img.shields.io/static/v1?label=license&message=MIT&color=7bc4ff&labelColor=161c30">
+  <img alt="version" src="https://img.shields.io/static/v1?label=version&message=v1.4.3&color=7bc4ff&labelColor=161c30">
+  <img alt="gate" src="https://img.shields.io/static/v1?label=gate&message=26%2F26%20passed&color=7fe0a8&labelColor=161c30">
+  <img alt="dependencies" src="https://img.shields.io/static/v1?label=dependencies&message=0&color=7fe0a8&labelColor=161c30">
+  <img alt="build" src="https://img.shields.io/static/v1?label=build&message=none%20needed&color=b8c3d6&labelColor=161c30">
+</p>
+
 ![ds_landing-motion — моушн и эффекты лендинга для ИИ-агентов](assets/cover.png)
 
 > **Скилл про движение, которое несёт информацию, и вкус, который его выбирает** — Victor Zaitsev / Discovery System
@@ -29,10 +37,11 @@
 
 Кадры ниже — не мокапы: это снимки `demo/index.html` из прогона `python demo/measure.py` (Chrome, Windows 11), лежат в [`docs/`](docs/). Полный отчёт с числами — [`docs/run_verify.json`](docs/run_verify.json).
 
-| | |
-|---|---|
-| ![Полная страница демо, все 13 приёмов](docs/full-page.png) | ![Мобильная версия 390px](docs/mobile-full.png) |
-| Полная страница: 13 приёмов на одной, каждый печатает свои числа | 390px: горизонтального переполнения нет |
+<p align="center">
+  <img src="docs/full-page.png" width="640" alt="Полная страница демо: 13 приёмов">
+  <img src="docs/mobile-full.png" width="180" alt="Мобильная версия 390px">
+</p>
+<p align="center"><sub>Слева — полная страница демо, каждый приём печатает свои числа. Справа — те же блоки на 390px, горизонтального переполнения нет.</sub></p>
 
 Числа последнего прогона (из `docs/run_verify.json`):
 
@@ -48,11 +57,19 @@
 
 Три готовые витрины в [`docs/showcase/`](docs/showcase/) — открываются двойным кликом (file://, сеть не нужна):
 
-| Витрина | Что показывает | Открыть |
-|---|---|---|
-| ![Анатомия установки](docs/showcase/preview-anatomy.png) | **Анатомия установки:** 7 станций цепочки «агент за вечер» — от облачного сервера до довольного клиента. Изометрия на `preserve-3d` разбирается и собирается, наведение на карточку подсвечивает её куб | [`showcase-anatomy.html`](docs/showcase/showcase-anatomy.html) |
-| ![3D-карта рынка](docs/showcase/preview-jewelry.png) | **3D-карта рынка:** рельеф из шести ниш на canvas2d, hairline-изолинии marching squares. Клик по точке — суть ниши и её главный риск | [`showcase-jewelry.html`](docs/showcase/showcase-jewelry.html) |
-| ![Живой hero](docs/showcase/preview-hero.png) | **Живой hero:** 4 бита за ~14 секунд — курсор ставит задачу, агент отвечает, карточка прилетает с роллом цифр, пейофф держится, сброс возвращает в начало | [`showcase-hero.html`](docs/showcase/showcase-hero.html) |
+<p align="center">
+  <a href="docs/showcase/showcase-anatomy.html"><img src="docs/showcase/preview-anatomy.png" width="270" alt="Анатомия установки"></a>
+  <a href="docs/showcase/showcase-jewelry.html"><img src="docs/showcase/preview-jewelry.png" width="270" alt="3D-карта рынка"></a>
+  <a href="docs/showcase/showcase-hero.html"><img src="docs/showcase/preview-hero.png" width="270" alt="Живой hero"></a>
+</p>
+
+| Витрина | Что показывает |
+|---|---|
+| [Анатомия установки](docs/showcase/showcase-anatomy.html) | 7 станций цепочки «агент за вечер»: от облачного сервера до довольного клиента. Изометрия на `preserve-3d` разбирается и собирается, наведение на карточку подсвечивает её куб |
+| [3D-карта рынка](docs/showcase/showcase-jewelry.html) | Рельеф из шести ниш на canvas2d, hairline-изолинии marching squares. Клик по точке — суть ниши и её главный риск |
+| [Живой hero](docs/showcase/showcase-hero.html) | 4 бита за ~14 секунд: курсор ставит задачу, агент отвечает, карточка прилетает с роллом цифр, пейофф держится, сброс возвращает в начало |
+
+Все три открываются двойным кликом из `file://` — сеть не нужна.
 
 ## Быстрый старт
 
